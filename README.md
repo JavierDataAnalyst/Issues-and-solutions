@@ -4,7 +4,8 @@
 
 Aquí comparto cómo convierto **preguntas de negocio** en **respuestas accionables** usando datos.
 
-![Data](/assets/header.jpg)
+![Data](https://d2nzy1qhita6w.cloudfront.net/media/magefan_blog/data-analysis-skills-duties-responsibilities.jpeg)
+
 
 ## Sobre mí
 Soy analista de datos enfocado en **resolver dudas de negocio** con **SQL**. Mi fuerte es traducir necesidades de marketing, ventas y operaciones en consultas eficientes que limpian, relacionan y explican los datos con claridad.  
