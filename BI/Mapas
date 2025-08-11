@@ -1,0 +1,63 @@
+WITH referidos_count AS (SELECT
+		 "Customer Referral Source Deal" AS id_deal_referidor,
+		 COUNT(*) AS numero_referidos
+FROM  "Deals" 
+WHERE	 "Customer Referral Source Deal"  IS NOT NULL
+GROUP BY  "Customer Referral Source Deal") ,
+todos_los_deals AS (SELECT
+		 d.Id AS referido_id,
+		 CONCAT('https://crm.zoho.com/crm/org699641359/tab/Potentials/', d.Id) AS link_referido,
+		 LOWER(d."Preferred Name") AS referido_nombre,
+		 d."Customer Referral Source Deal" AS referidor_id,
+		 CONCAT('https://crm.zoho.com/crm/org699641359/tab/Potentials/', d."Customer Referral Source Deal") AS link_referidor,
+		 LOWER(d2."Preferred Name") AS referidor_nombre,
+		 d."Deal Name" AS "Deal Name",
+		 d."Main Address" AS "Dirección",
+		 d."Main Email" AS "Correo Electrónico",
+		 d."Contact Phone Number" AS "Teléfono",
+		 d."Products Type" AS "Products Type",
+		 d."Amount" AS "Ingresos ($ USD)",
+		 rco.numero_referidos as numero_referidos,
+		 d."Customer Referral Source Deal" AS fue_referido_por
+FROM  "Deals" d
+LEFT JOIN "Deals" d2 ON d2.Id  = d."Customer Referral Source Deal" 
+LEFT JOIN referidos_count rco ON rco.id_deal_referidor  = d.Id)
+SELECT
+		 td.referido_id AS referido_id,
+		 td.link_referido AS link_referido,
+		 td.referido_nombre AS referido_nombre,
+		 td.referidor_id AS referidor_id,
+		 td.referidor_nombre AS referidor_nombre,
+		 td.link_referidor AS link_referidor,
+		 TO_DECIMAL(de."Longitude", 12, 10) AS longitude,
+		 TO_DECIMAL(de."Latitude", 12, 10) AS latitude,
+		 td."Deal Name" AS "Deal Name",
+		 td."Dirección" AS "Dirección",
+		 td."Correo Electrónico" AS "Correo Electrónico",
+		 td."Teléfono" AS "Teléfono",
+		 td."Products Type" AS "Products Type",
+		 td."Ingresos ($ USD)" AS "Ingresos ($ USD)",
+		 COALESCE(td.numero_referidos, 0) AS numero_referidos,
+		 COALESCE(td.numero_referidos, 0) AS cantidad_referidos,
+		 
+			CASE
+				 WHEN td.numero_referidos  IS NULL THEN 'No'
+				 ELSE 'Sí'
+			 END AS "Ha referido",
+		 
+			CASE
+				 WHEN td.numero_referidos  > 9 THEN 'VIP 10+'
+				 WHEN td.numero_referidos  BETWEEN 5  AND  9 THEN 'VIP 5 a 9 referidos'
+				 WHEN td.numero_referidos  BETWEEN 2  AND  4 THEN '2 a 4 referidos'
+				 WHEN td.numero_referidos  = 1 THEN '1 referido'
+				 ELSE 'Referidos 0'
+			 END AS "VIP STATUS",
+		 
+			/* ¿Fue referido por alguien?*/
+			CASE
+				 WHEN td.fue_referido_por  IS NULL THEN 'No fue referido'
+				 ELSE 'Sí fue referido'
+			 END AS "Fue referido"
+FROM  todos_los_deals td
+LEFT JOIN "Design and Engineering" de ON td.referido_id  = de."Associated Deal"  
+ 
