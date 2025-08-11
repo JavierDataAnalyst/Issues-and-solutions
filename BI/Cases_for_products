@@ -1,0 +1,39 @@
+WITH number_of_deals_by_contact AS (SELECT
+		 cc.Id AS id_contacts,
+		 row_number() over(PARTITION BY cc.Id  ) AS contacts_with_deal_count
+FROM  "Contacts" cc
+JOIN "Deals" dd ON dd."Contact Name"  = cc.Id)
+SELECT
+		 c.Id AS id_contacts,
+		 MAX(nc.contacts_with_deal_count) AS contacts_with_deal_count,
+		 MAX(CONCAT('https://crm.zoho.com/crm/org699641359/tab/Contacts/', c.Id)) AS link_crm_contact,
+		 MAX(d.Id) AS deal_id,
+		 MAX(c."Phone") AS phone,
+		 MAX(d."Deal Name") AS "Deal Name",
+		 MAX(d."Link CRM") AS Deal_link_crm,
+		 MAX(d."Products Sold") AS products_in_deals,
+		 MAX(CASE
+				 WHEN d."Pipeline"  IN ( 'Roofing'  ) THEN 'Roofing'
+				 WHEN d."Pipeline"  IN ( 'Commercial Solar'  ) THEN 'Commercial Solar'
+				 WHEN d."Products Sold"  IN ( 'CDBG Tesla Only'  , 'Tesla Only'  ) THEN 'Batteries'
+				 WHEN d."Products Sold"  IN ( 'Enphase Retrofit'  , 'Solar Only (Battery-Ready)
+'  , 'Lease - Solar + Enphase'  , 'Loan - Solar+'  , 'PPA'  , 'Old - Loan: Solar + LG'  , 'Old - PPA'  , 'Solar + LG'  , 'Solar Only (Battery-Ready)'  ) THEN 'Solar'
+				 WHEN d."Products Sold"  IN ( 'Solar + Tesla'  , 'Lease - Solar + PW+'  , 'CDBG Solar + PW3'  , 'CDBG Solar + PW+
+'  , 'CDBG Solar + Tesla'  , 'Lease - Solar + PW+'  , 'Lease - Solar + PW3'  , 'Lease - Solar + PW3 (Esc)'  , 'Lease - Solar + Tesla'  , 'Lease - Solar + Tesla (Esc)'  , 'Lease-Solar + Generac (Esc)'  , 'Loan - Solar + Enphase'  , 'Loan - Solar + PW+'  , 'Loan - Solar + PW3'  , 'Loan - Solar + Tesla'  , 'PW + Solar & PW+'  , 'Sistema Solar ("Battery Ready")'  , 'Solar & PW+'  , 'Solar & PW3'  , 'Solar + Tesla'  ) THEN 'Solar + Battery'
+				 WHEN d."Products Sold"  IN ( 'Old - Hibridos'  , 'Old - Sonnen'  , 'Old - Sonnnen'  ) THEN 'Others'
+				 ELSE d."Products Sold"
+			 END) AS "by_products_sold",
+		 GROUP_CONCAT(DISTINCT 
+			CASE
+				 WHEN (d."Pipeline"  IN ( 'Residential Solar'  )
+				 AND	d."Products Sold"  IN ( 'CDBG Tesla Only'  , 'Tesla Only'  )) THEN 'Battery Only'
+				 WHEN d."Pipeline"  IN ( 'Residential Solar'  ) THEN 'Residential Solar'
+				 WHEN d."Pipeline"  IN ( 'Roofing'  ) THEN 'Roofing'
+				 WHEN d."Pipeline"  IN ( 'Commercial Solar'  ) THEN 'Commercial Solar'
+				 ELSE d."Products Sold"
+			 END SEPARATOR ',') AS by_pipeline
+FROM  "Contacts" c
+JOIN "Deals" d ON d."Contact Name"  = c.Id 
+LEFT JOIN number_of_deals_by_contact nc ON nc.id_contacts  = c.Id  
+GROUP BY  c.Id 
+ 
