@@ -1,0 +1,902 @@
+SELECT
+		 'Lead' as 'Where',
+		 CONCAT('https://crm.zoho.com/crm/org666151142/tab/Leads/', l."Id") AS "CRM Link",
+		 l."Company" as "Name",
+		 l."Vans_ claudia" AS "Vans_ claudia",
+		 l."Id" as Id,
+		 null as "Deal Id",
+		 l."Lead Type" as "Type",
+		 l."Converted Account" as "Sales Organization",
+		 d."Deal Number" as "Deal Number",
+		 l."Lead Number" as "Lead Number",
+		 l."Created Time" as "Created Time",
+		 
+			CASE
+				 WHEN (EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CURRENT_DATE())
+				 OR	EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CURRENT_DATE()) - 1)
+				 AND	EXTRACT(MONTH FROM l."Created Time")  IN ( EXTRACT(MONTH FROM CURRENT_DATE())  , EXTRACT(MONTH FROM CURRENT_DATE()) - 1  , EXTRACT(MONTH FROM CURRENT_DATE()) - 2  ) THEN 1
+				 ELSE 0
+			 END AS "Last 3 Months",
+		 null as "Deal Created Time",
+		 l."Modified Time" as "Modified Time",
+		 Hour(l."Created Time") as "Time",
+		 date(first_date_current_week(l."Created Time")) as "Week",
+		 Concat(Year(first_date_current_week(l."Created Time")), '-', Month(first_date_current_week(l."Created Time"))) as "Month",
+		 l."Full Name" as "Full Name",
+		 l."Phone" as "Phone",
+		 l."Sales Consultant Phone" as "consultant phone",
+		 l."Email" as "Email",
+		 l."Street" as "Street",
+		 l."Lead Source" as "Lead Source",
+		 l."Lead Source Detail" as "Lead Source Detail",
+		 l."team assistance" as "Team Assistance",
+		 l."Bonus Status (Calidad)" as "Bonus Status (Calidad)",
+		 d."Stage" as "Deal Stage",
+		 l."Product" as "Main product",
+		 null as "Installation time",
+		 l."Channel" AS "Channel",
+		 
+			case
+				 when l."Created Time"  <= '2024-09-09'
+				 AND	l."Lead Source"  = 'THD' THEN l."Lead Source"
+				 when l."Created TIme"  > '2024-09-09'
+				 AND	l."Source Detail"  = 'THD' THEN l."Source Detail"
+				 ELSE null
+			 END AS 'THD',
+		 l."City" as "City",
+		 
+			CASE
+				 When l."Channel"  = 'Canvassing'
+				 AND	sc."Region"  is Null
+				 AND	l."Location"  is Null then 'Canvassing'
+				 When l."Channel"  = 'Canvassing'
+				 AND	sc."Region"  is not Null then sc."Region"
+				 When l."Channel"  = 'Canvassing'
+				 AND	sc."Region"  is Null then l."Location"
+				 When l."Channel"  = 'Booths and Special Events'
+				 AND	l."Source Detail"  = 'Unknown' then 'Booths and Special Events'
+				 When l."Channel"  = 'Booths and Special Events'
+				 AND	l."Source Detail"  is Not Null then l."Source Detail"
+				 Else l."SubChannel"
+			 End as "Sub Channel",
+		 l."Ready to Pay" as "Ready to pay",
+		 
+			case
+				 when l."Sales Consultant Role"  like '%Trainee%' THEN 'Solar Academy'
+				 else 'Others'
+			 end as "Sub-category",
+		 
+			case
+				 when l."Channel"  = 'Canvassing' then 'Canvassing'
+				 when l."Channel"  = 'Retail' then 'Retail'
+				 Else 'Rest'
+			 End AS "RCR",
+		 
+			case
+				 when l."Channel"  IN ( 'Digital'  , 'Sunnova'  , 'Inbound'  , 'Referral'  , 'PR Referral'  ) Then 'Marketing'
+				 when l."Channel"  IN ( 'Canvassing'  ) Then 'Canvassing'
+				 when l."Channel"  IN ( 'Retail'  , 'Field Sales'  , 'Booths and Special Events'  ) Then 'Booths and Special Events'
+				 Else 'Unknown'
+			 End AS 'Team structure',
+		 
+			case
+				 when l."Lead Notes"  like '%Spanish%' then 'Spanish'
+				 when l."Lead Notes"  like '%spanish%' then 'Spanish'
+				 when l."Lead Notes"  like '%espanol%' then 'Spanish'
+				 when l."Lead Notes"  like '%english%' then 'English'
+				 when l."Lead Notes"  like '%English%' then 'English'
+				 when l."Language Preference"  like '%English%' then 'English'
+				 when l."Language Preference"  like '%Espa%' then 'Spanish'
+				 when l."Language Preference"  like '%Spanish%' then 'Spanish'
+				 when l."Language Preference"  like '%spanish%' then 'Spanish'
+				 else l."Language Preference"
+			 end as "Language",
+		 l."Sunnova Lead Source" as "Sunnova Lead Source",
+		 l."Office Location" as "Office Location",
+		 
+			case
+				 When l."Store Number"  LIKE '%HOME DEPOT%' THEN l."Store Number"
+				 When l."Store Number"  LIKE '%Home Depot%' THEN l."Store Number"
+				 When l."Store Number"  LIKE '%ICON Home Depot%' THEN l."Store Number"
+				 When l."Store Number"  LIKE '%home depot%' THEN l."Store Number"
+				 else 'Others'
+			 End as "Store Number",
+		 l."Lead Source Id" as 'Lead Source Id',
+		 
+			Case
+				 WHEN l."Lead Source"  IN ( 'AMG Webform'  , 'Dataman Group'  , 'FL - LP'  , 'Facebook/Instagram'  , 'Facebook LeadGen'  , 'Facebook/Social Media'  , 'Facebook Website Leads'  , 'Google Ads'  , 'Paid Media Catch All'  , 'Tesla Retro Fit'  ) THEN 'Digital'
+				 WHEN l."Lead Source"  LIKE '%Facebook%' THEN 'Digital'
+				 WHEN l."Lead Source"  IN ( 'Website'  , 'website'  , 'Website PopUp'  ) THEN 'Direct'
+				 WHEN l."Lead Source"  IN ( 'Organic Search'  , 'Organic'  ) THEN 'Organic'
+				 WHEN l."Lead Source"  = 'Call In' THEN 'Inbound'
+				 else Null
+			 end as "SEO Channels",
+		 
+			Case
+				 When l."Lead Source"  like 'Academy' then 'Solar Academy'
+				 When l."Lead Source"  like 'Facebook LeadGen' then 'Meta'
+				 When l."Lead Source"  like 'Facebook Website Leads' then 'Meta'
+				 When l."Lead Source"  like 'website' then 'Website'
+				 When l."Lead Source"  like 'Facebook/Instagram' then 'Meta/Instagram'
+				 When l."Lead Source"  like 'Fair and Festivals' then 'Fairs and Festivals'
+				 When l."Lead Source"  like 'Fairs and Festivals' then 'Fairs and Festivals'
+				 When l."Lead Source"  like 'Lead Source' then 'None'
+				 When l."Lead Source"  like 'Lease - Canvassers' then 'Canvassing'
+				 When l."Lead Source"  like 'Organic Search' then 'SEO - Organic Search'
+				 When l."Lead Source"  like 'Other' then 'None'
+				 When l."Lead Source"  like 'Website PopUp' then 'SEO - Organic Search'
+				 When l."Lead Source"  like 'Windmar Website' then 'SEO - Organic Search'
+				 when l."Lead Source"  like 'Best Company' then 'Best Company'
+				 when l."Lead Source"  like 'Demand IQ' then 'Demand IQ'
+				 when l."Lead Source"  like 'Red Ventures' then 'Red Ventures'
+				 when l."Lead Source"  like 'Other'
+				 AND	l."Lead Source Detail"  like '%Solar Direct%' then 'Solar Direct Now'
+				 when l."Lead Source"  like 'Solar Cheat Code' then 'Solar Direct Now'
+				 else l."Lead Source"
+			 end as "Sub-Channel",
+		 
+			Case
+				 when DATE(l."Appointment DateTime")  < curdate()
+				 AND	(l."Appointment Result"  is null
+				 AND	l."Appointment Status - Did an Appointment Happen ?"  is null) then 'Open Dispo'
+				 when l."Lead Status"  = 'Appointment Completed' then 'Appointment Completed'
+				 when l."Lead Status"  = 'Appointment' then 'Appointment Booked'
+				 when l."Lead Status"  like '%Junk%' then 'Lost/Junk/DQ'
+				 when l."Lead Status"  like '%Sold%' then 'Appointment Completed'
+				 when l."Lead Status"  is null then 'New Lead'
+				 else l."Lead Status"
+			 end as "Status",
+		 
+			Case
+				 when l."Lead Status"  like '%Junk%' then 'No Contact'
+				 when l."Lead Status"  like '%Lost%' then 'No Contact'
+				 when l."Lead Status"  like '%Attempting to Contact%' then 'No Contact'
+				 else 'Contact'
+			 end as 'Lead Type',
+		 
+			Case
+				 when (l."Lead Owner Name"  like '%Sunnova API%'
+				 AND	(l."Lead Status"  like '%Attempting%'
+				 OR	l."Lead Status"  like '%Appointment%'
+				 OR	l."Lead Status"  like '%Call Later%')
+				 AND	l."Telesales Rep Name"  is null) then 'New Lead'
+				 when l."Lead Owner Name"  like 'Zoho Admin FL'
+				 AND	(l."Lead Status"  like '%Attempting%'
+				 OR	l."Lead Status"  like '%Appointment%'
+				 OR	l."Lead Status"  like '%Call Later%')
+				 AND	l."Telesales Rep Name"  is null then 'New Lead'
+				 when l."Lead Status"  like 'Appointment' then 'Appointment Booked'
+				 when l."Lead Status"  like '%Junk%' then 'Lost/Junk/DQ'
+				 when l."Lead Status"  like '%Sold%' then 'Appointment Completed'
+				 when l."Appointment Result"  LIKE '%Evaluating%' then 'Evaluating Proposal'
+				 when l."Appointment Result"  LIKE '%Reschedule%' then 'Reschedule'
+				 When l."Appointment Result"  like '%Follow%' then 'Follow Up'
+				 when l."Lead Status"  is null then 'New Lead'
+				 else l."Lead Status"
+			 end as "Lead Side Status",
+		 l."Date and Time Appointment Set" as "Appointment Set Date",
+		 l."Appointment DateTime" as "Appointment Date/Time",
+		 l."Created Time" as "Closing Date",
+		 null as "Installation Completed Date",
+		 l."Appointment Status - Did an Appointment Happen ?" as "Appointment Status - Did an Appointment Happen ?",
+		 sc."New Consultant" as new_consultant,
+		 sc."Sales Rep" as "Sales Consultant",
+		 sc."Primary Rep Name" as "Primary Rep Name",
+		 sc."Secondary Rep Name" as "Secondary Rep Name",
+		 sc."Id" as "Consultant Id",
+		 sc."Sales Rep Role" as "Role",
+		 NULL As "Sales assits role",
+		 NULL AS "Sales assits name",
+		 sc."Primary Rep Role" as "Primary Rep Role",
+		 
+			CASE
+				 WHEN l."Sales Rabbit Office"  = 'VAN 1 Academy Orl' THEN 'VAN 1 Academy Orlando'
+				 WHEN l."Sales Rabbit Office"  = 'VAN 2 Academy Orl' THEN 'VAN 2 Academy Orlando'
+				 ELSE l."Sales Rabbit Office"
+			 END AS "Sales Rabbit Office",
+		 
+			CASE
+				 WHEN LOWER(l."Driver")  IN ( 'julio cesar'  ) THEN 'Julio Cesar'
+				 WHEN LOWER(l."Driver")  IN ( 'alejandro ustariz'  ) THEN 'Alejandro Ustariz'
+				 WHEN LOWER(l."Driver")  IN ( 'carlos mateo'  ) THEN 'Carlos Mateo'
+				 WHEN LOWER(l."Driver")  IN ( 'derrick arnett'  , 'derrick arnet'  ) THEN 'Derrick Arnett'
+				 WHEN LOWER(l."Driver")  IN ( 'benjamin alejandro'  , 'benjaman alejandro'  , 'ben alejandro'  ) THEN 'Benjamin Alejandro'
+				 WHEN LOWER(l."Driver")  IN ( 'benjamin (orl)'  ) THEN 'Benjamin Alejandro'
+				 WHEN LOWER(l."Driver")  IN ( 'jorge ayala'  , 'jorge ayala-'  ) THEN 'Jorge Ayala'
+				 WHEN LOWER(l."Driver")  IN ( 'jose molina'  , 'jose molina'  ) THEN 'Jose Molina'
+				 WHEN LOWER(l."Driver")  IN ( 'richard vasquez'  , 'richard vazquez'  ) THEN 'Richard Vasquez'
+				 WHEN LOWER(l."Driver")  IN ( 'ricky galvan'  ) THEN 'Ricky Galvan'
+				 WHEN LOWER(l."Driver")  IN ( 'german salazar'  ) THEN 'German Salazar'
+				 WHEN LOWER(l."Driver")  IN ( 'rigo benitez'  ) THEN 'Rigo Benitez'
+				 WHEN LOWER(l."Driver")  IN ( 'nathanial martin'  ) THEN 'Nathanial Martins'
+				 WHEN LOWER(l."Driver")  IN ( 'marcelo pereira'  ) THEN 'Marcelo Pereira'
+				 WHEN LOWER(l."Driver")  IN ( 'ricardo galvan'  ) THEN 'Ricardo Galvan'
+				 WHEN LOWER(l."Driver")  IN ( 'curtis friend'  ) THEN 'Curtis Friend'
+				 WHEN LOWER(l."Driver")  IN ( 'alex almonte'  ) THEN 'Alex Almonte'
+				 WHEN LOWER(l."Driver")  IN ( 'johnathan colon'  ) THEN 'Johnathan Colon'
+				 WHEN LOWER(l."Driver")  IN ( 'luis mercado'  ) THEN 'Luis Mercado'
+				 WHEN LOWER(l."Driver")  IN ( 'none'  ) THEN 'None'
+				 ELSE l."Driver"
+			 end as "Canvasser_Driver",
+		 l."Source Detail" as "Source Detail",
+		 l."Location" AS "Location",
+		 l."Sales Consultant ID" as "Sales Consultant ID",
+		 l."Sales Consultant Email" as "Sales Consultant Email",
+		 l."Sales Consultant Role" as "Sales consultant Role",
+		 sc."Sales Rep Inactive" as "Inactive",
+		 ss."Sales Rep Inactive" as "Inactive Advisor",
+		 s."Sales Rep" as "Sales Team Name",
+		 sc."Created Time" as "Date Seller Created",
+		 sc."1st Trainee Sale" as "1st Trainee Sale",
+		 sc."2nd Trainee Sale" as "2nd Trainee Sale",
+		 sc."3rd Trainee Sale" as "3rd Trainee Sale",
+		 s."Sales Rep Role" as 'Sales Team Role',
+		 s."Primary Rep Name" as "Primary Override Rep",
+		 l."SAP Name" as "Solar Advisor",
+		 s."Primary Rep Name" as "Manager",
+		 
+			CASE
+				 when s."Secondary Rep Name"  is null
+				 AND	s."Sales Rep Role"  = 'Branch Manager' then s."Sales Rep"
+				 when s."Secondary Rep Name"  is null
+				 AND	l."Sales Consultant"  IN ( 'Abdiel Mendez'  , 'Edgar Castilla'  , 'Niselio Garcia'  ) then l."Sales Consultant"
+				 else s."Secondary Rep Name"
+			 end as "Supervisor",
+		 sc."Region" as "Region",
+		 sc."Consultant Contract" as "Consultant Contract",
+		 DATEDIFF(GREATEST(sc."1st Trainee Sale", sc."2nd Trainee Sale", sc."3rd Trainee Sale"), sc."Created Time") AS "Days to Graduate",
+		 
+			CASE
+				 WHEN d."Closing Date"  BETWEEN LEAST(sc."1st Trainee Sale", sc."2nd Trainee Sale", sc."3rd Trainee Sale")  AND  GREATEST(sc."1st Trainee Sale", sc."2nd Trainee Sale", sc."3rd Trainee Sale") THEN 1
+				 ELSE 0
+			 END AS 'Leads to Graduate',
+		 l."Telesales Rep Name" as "Telesales Name",
+		 
+			case
+				 when us."Profile Name"  like '%Tele%' then 1
+				 when u."Profile Name"  like '%Tele%' then 1
+				 when us."Profile Name"  like '%Kaisy special%' then 1
+				 when u."Profile Name"  like '%Kaisy special%' then 1
+				 when l."Telesales Rep"  IN ( 'Sirena Logan-Burns'  , 'Omayra Mollinedo Cancel'  , 'Kaisy Zayas'  )
+				 OR	l."Lead Owner Name"  IN ( 'Sirena Logan-Burns'  , 'Omayra Mollinedo Cancel'  , 'Kaisy Zayas'  ) THEN 1
+				 else 0
+			 end as "isCallCenter",
+		 null as "Sales Assist",
+		 null as 'Assist to Line',
+		 
+			case
+				 when l."Telesales Rep"  is null then l."Lead Owner Name"
+				 else l."Telesales Rep"
+			 end as "Owner",
+		 l."Lead Notes" AS "Lead Notes",
+		 l."Last Contacted Date" as "Last Contacted Date",
+		 d."Amount" as "Revenue",
+		 l."Product" as "Products",
+		 NULL AS "Pipeline",
+		 d."System Size (kW)" as "System Size (kW)",
+		 REPLACE(REPLACE(REPLACE(l."Battery Type", 'Generac', ''), 'Enphase Encharge 3', ''), 'N/A', '') AS "Battery Type",
+		 d."Amount" as "Amount",
+		 d."In service complete to" AS "In service complete to",
+		 
+			case
+				 when l."Deal Name - Roofing"  is not null
+				 AND	l."Products"  like '%Roofing%' then 1
+				 WHEN l."Converted Deal PV"  is not null
+				 AND	l."Products"  like '%Roofing%' then 1
+				 else 0
+			 end as "isRoofing",
+		 
+			case
+				 when l."Converted Deal PV"  is not null
+				 AND	(l."Products"  like '%Tesla%'
+				 OR	l."Products"  like '%Batter%'
+				 OR	l."Products"  = 'Enphase Encharge 3') then 1
+				 else 0
+			 end as "isBattery",
+		 
+			case
+				 when l."Converted Deal PV"  is not null
+				 AND	(l."Products"  like '%PV%'
+				 OR	l."Products"  like '%Pannels%'
+				 OR	l."Products"  like '%Generator%'
+				 OR	l."Products"  IN ( 'Generac Essentials'  , 'Generac Extended Power'  , 'Generac Power Plus'  , 'Generac Essential'  )) then 1
+				 else 0
+			 end as "isPV",
+		 0 as "isCancelled-Roofing",
+		 0 as "isCancelled-Battery",
+		 0 as "isCancelled-PV",
+		 1 as "isLead",
+		 
+			case
+				 when (l."Lead Status"  like 'Appointment Booked'
+				 AND	l."Appointment DateTime"  <= CURDATE()) then 0
+				 when l."Lead Status"  like 'New Lead' then 0
+				 else 1
+			 end as "isDispo",
+		 
+			Case
+				 when l."Appointment DateTime"  > 0 then 1
+				 when l."Lead Status"  like '%Sold%' then 1
+				 else 0
+			 end as "isAppointment",
+		 
+			case
+				 WHEN l."Appointment DateTime"  > 0
+				 AND	l."Appointment Status - Did an Appointment Happen ?"  like '%Yes%' then 1
+				 WHEN l."Appointment DateTime"  > 0
+				 AND	l."Appointment Status - Did an Appointment Happen ?"  IN ( 'Pitched - Closed'  , 'Complete'  ) then 1
+				 WHEN l."Appointment DateTime"  > 0
+				 AND	l."Lead Status"  in ( 'Credit Failed'  , 'Reschedule OR Follow Up Appointment Needed'  , 'Sold'  , 'Appointment Confirmed'  , 'Appointment Completed'  ) then 1
+				 when l."Lead Status"  like '%Sold%' then 1
+				 else 0
+			 end as "Appointment Confirmed",
+		 
+			case
+				 when l."Appointment DateTime"  > 0
+				 AND	l."Appointment Status - Did an Appointment Happen ?"  like '%Yes%' then 1
+				 when l."Appointment DateTime"  > 0
+				 AND	l."Lead Status"  like '%Sold%' then 1
+				 when l."Appointment DateTime"  > 0
+				 AND	l."Appointment Status - Did an Appointment Happen ?"  IN ( 'Pitched - Closed'  , 'Complete'  ) then 1
+				 else 0
+			 end as "isSitdown",
+		 
+			case
+				 when l."Deal Name - PV and Battery"  is not null then 1
+				 when l."Deal Name - Roofing"  is not null then 1
+				 when d."Converted from Lead"  is not null then 1
+				 else 0
+			 end as "isDeal",
+		 
+			case
+				 when lower(l."bonus status (calidad)")  like 'aprobado%' then 1
+				 else 0
+			 end as isApprovedQuality,
+		 
+			Case
+				 when l."Appointment DateTime"  <= CURDATE()
+				 AND	l."Lead Status"  in ( 'Attempting to Contact'  , 'Call Later'  , 'Appointment Booked'  , 'Reschedule OR Follow Up Appointment Needed'  , 'Appointment Confirmed'  ) then 1
+				 else 0
+			 end as "isPending",
+		 
+			case
+				 when l."Lead Status"  like '%Completed%'
+				 AND	l."Appointment Result"  like '%Evaluating%' then 1
+				 else 0
+			 end as "Evaluating Proposal",
+		 
+			case
+				 when l."Appointment Result"  like '%Follow%'
+				 AND	(l."Lead Status"  not like '%Sold%'
+				 OR	l."Lead Status"  not like '%Lost%') then 1
+				 else 0
+			 end as "Follow Up",
+		 l."Appointment Result" as "Appointment Result",
+		 0 AS "isCancelled",
+		 
+			case
+				 when l."Lead Status"  is null then 0
+				 when l."Lead Status"  = 'New Lead' then 0
+				 when l."Lead Status"  = 'New Lead' then 0
+				 when l."Lead Status"  like '%Junk%' then 0
+				 when l."Lead Status"  like '%Lost%' then 0
+				 when l."Lead Status"  like '%Attempting%' then 0
+				 else 1
+			 end as "isContact",
+		 
+			CASE
+				 WHEN l."Appointment DateTime"  < CURDATE()
+				 AND	l."Appointment DateTime"  > l."Created Time" THEN DATEDIFF(l."Appointment DateTime", l."Created Time")
+				 ELSE NULL /* No hace la diferencia si Appointment DateTime es posterior o igual a la fecha actual*/
+			 END AS "Days to Appointment",
+		 
+			CASE
+				 WHEN l."Appointment DateTime"  is null THEN DATEDIFF(CURDATE(), l."Created Time")
+				 ELSE NULL /* No hace la diferencia si Appointment DateTime es posterior o igual a la fecha actual*/
+			 END AS "Elapsed days",
+		 l."Time Frame" as "Time Frame",
+		 
+			CASE
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(MONTH FROM l."Created Time")  < EXTRACT(MONTH FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(DAY FROM l."Created Time")  <= EXTRACT(DAY FROM CAST(NOW() AS DATE)) THEN 'Current year till today'
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(MONTH FROM l."Created Time")  = EXTRACT(MONTH FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(DAY FROM l."Created Time")  <= EXTRACT(DAY FROM CAST(NOW() AS DATE)) THEN 'Current year till today'
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE)) - 1
+				 AND	EXTRACT(MONTH FROM l."Created Time")  <= EXTRACT(MONTH FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(DAY FROM l."Created Time")  <= EXTRACT(DAY FROM CAST(NOW() AS DATE)) THEN 'Current year till today'
+				 ELSE NULL
+			 END AS "Creado por año",
+		 
+			CASE
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(MONTH FROM l."Created Time")  <= EXTRACT(MONTH FROM CAST(NOW() AS DATE)) THEN 'Current Year'
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE)) - 1
+				 AND	EXTRACT(MONTH FROM l."Created Time")  <= EXTRACT(MONTH FROM CAST(NOW() AS DATE)) THEN 'Current Year'
+				 ELSE NULL
+			 END AS "Created year current month",
+		 
+			CASE
+				 when l."Appointment DateTime"  < CURDATE() then 1
+				 else 0
+			 end as "Appointment Date to Today",
+		 l."Lead Lost Reason" as "Lead Lost Reason",
+		 l."Appointment Type" as "Appointment Type",
+		 l."SAP ID" as "Solar Advisor Id",
+		 l."Trainee ID" as "Trainee ID",
+		 l."Trainee Name" as "Trainee Name",
+		 ss."District" as "District",
+		 sc."Director" as "Sales Director",
+		 l."Windmar APP" as "Windmar APP",
+		 sc."Language" as "Sales Language",
+		 sc."Region" as "Sales Region",
+		 null as "Active Sales.",
+		 l."Lead Worked" as "Lead Worked",
+		 l."Last Modified by Lead Owner" as "Last Modified by Lead Owner",
+		 null AS "NTP From",
+		 null AS "NTP To",
+		 null as "Pre-Engineering  From",
+		 null as "Pre-Engineering  To",
+		 null as "Engineering",
+		 null as "Engineering From",
+		 null as "Engineering To",
+		 null AS 'Client Coordinator',
+		 null AS 'Permit Received Date',
+		 null as "Date Deal Went Closed Lost",
+		 null as "Permit To",
+		 null as "Permit From",
+		 null as "Utility To",
+		 null as "Utility From",
+		 null as "In Service to",
+		 null as "In Service from",
+		 null as "Date Closed Lost",
+		 null as finance_choice,
+		 
+			CASE
+				 WHEN sc."First Sale Date"  IS NOT NULL
+				 AND	date_diff((sc."First Sale Date"), (sc."Created Time"))  >= 0 THEN date_diff((sc."First Sale Date"), (sc."Created Time"))
+				 ELSE NULL
+			 END AS "Creation_to_1st_Sale",
+		 
+			CASE
+				 WHEN sc."Second Sale Date"  IS NOT NULL
+				 AND	date_diff((sc."Second Sale Date"), (sc."Created Time"))  >= 0 THEN date_diff((sc."Second Sale Date"), (sc."Created Time"))
+				 ELSE NULL
+			 END AS "Creation_to_2nd_Sale",
+		 
+			CASE
+				 WHEN sc."Third Sale Date"  IS NOT NULL
+				 AND	date_diff((sc."Third Sale Date"), (sc."Created Time"))  >= 0 THEN date_diff((sc."Third Sale Date"), (sc."Created Time"))
+				 ELSE NULL
+			 END AS "Creation_to_3rd_Sale",
+		 sc."First Sale Date" AS "1st_sale_date",
+		 sc."Second Sale Date" AS "2nd_sale_date",
+		 sc."Third Sale Date" AS "3rd_sale_date",
+		 sc."Fourth Sale Date" AS "4th_Sale_date",
+		 
+			CASE
+				 WHEN sc."Fourth Sale Date"  IS NOT NULL
+				 AND	date_diff((sc."Fourth Sale Date"), (sc."Created Time"))  >= 0 THEN date_diff((sc."Fourth Sale Date"), (sc."Created Time"))
+				 ELSE NULL
+			 END AS "Creation_to_4thSale",
+		 d."closed lost reason" AS "Closed lost reason",
+		 st."windmar way start date" AS "windmar way start date",
+		 l."Canvassing Driver - Clean" AS "Canvasser Driver Name",
+		 l."Canvasser Driver City - Clean" AS "Canvasser Driver City"
+FROM  "Leads" l
+LEFT JOIN "Deals" d ON d.Id  = l."Converted Deal" 
+LEFT JOIN "Q_Sales Team" s ON l."Lead Owner_1"  = s."Id" 
+LEFT JOIN "Q_Sales Team" AS  ss ON d."SAP ID"  = ss."Employee Id" 
+LEFT JOIN "Q_Sales Team" sc ON l."Sales consultant ID"  = sc."Employee Id" 
+LEFT JOIN "Sales Team" AS  st ON st."employee ID"  = l."Sales consultant ID" 
+LEFT JOIN "Users" u ON u."Id"  = l."Lead Owner_1" 
+LEFT JOIN "Q_users_full_name" us ON us."Full Name"  = l."Telesales Rep"  
+WHERE	 l."Converted Deal"  is null
+ AND	l."Deal Name - PV and Battery"  is null
+ AND	l."Deal Name - Roofing"  is null
+UNION ALL
+ SELECT
+		 'Deal' as 'Where',
+		 CONCAT('https://crm.zoho.com/crm/org666151142/tab/Potentials/', d."Id") AS "CRM Link",
+		 d."Deal Name" as "Name",
+		 l."Vans_ claudia" AS "Vans_ claudia",
+		 l.id as "Id",
+		 d.Id as "Deal Id",
+		 d."Deal Type" as "Type",
+		 d."Sales Organization" as "Sales Organization",
+		 d."Deal Number" as "Deal Number",
+		 NULL AS "Lead Number",
+		 l."Created Time" as "Created Time",
+		 
+			CASE
+				 WHEN (EXTRACT(YEAR FROM d."Closing Date")  = EXTRACT(YEAR FROM CURRENT_DATE())
+				 OR	EXTRACT(YEAR FROM d."Closing Date")  = EXTRACT(YEAR FROM CURRENT_DATE()) - 1)
+				 AND	EXTRACT(MONTH FROM d."Closing Date")  IN ( EXTRACT(MONTH FROM CURRENT_DATE())  , EXTRACT(MONTH FROM CURRENT_DATE()) - 1  , EXTRACT(MONTH FROM CURRENT_DATE()) - 2  ) THEN 1
+				 ELSE 0
+			 END AS "Last 3 Months",
+		 d."Created Time" as "Deal Created Time",
+		 l."Modified Time" as "Modified Time",
+		 Hour(d."Created Time") as "Time",
+		 date(first_date_current_week(d."Created Time")) as "Week",
+		 Concat(Year(first_date_current_week(d."Created Time")), '-', Month(first_date_current_week(d."Created Time"))) as "Month",
+		 d."Preferred Name" as "Full Name",
+		 d."Client Phone" as "Phone",
+		 d."Sales Consultant Phone" as "consultant phone",
+		 d."Client Email" as "Email",
+		 d."Address" as "Street",
+		 d."Lead Source" as "Lead Source",
+		 d."Lead Source Detail" as "Lead Source Detail",
+		 l."team assistance" as "Team Assistance",
+		 l."Bonus Status (Calidad)" as "Bonus Status (Calidad)",
+		 d."Stage" as "Deal Stage",
+		 d."Main Product" as "Main product",
+		 date_diff(d."Installation Completed Date", d."Closing Date") as "Installation Time",
+		 
+			CASE
+				 When d."Channel"  IS NULL then l."channel"
+				 Else d."Channel"
+			 End as "Channel",
+		 
+			case
+				 when d."Closing Date"  <= '2024-09-09'
+				 AND	d."Lead Source"  = 'THD' THEN d."Lead Source"
+				 when d."Closing Date"  > '2024-09-09'
+				 AND	d."Source Detail"  = 'THD' THEN d."Source Detail"
+				 ELSE null
+			 END AS 'THD',
+		 l."city" as "City",
+		 
+			CASE
+				 When l."channel"  = 'Canvassing'
+				 AND	sc."Region"  is Null
+				 AND	l."location"  is Null then 'Canvassing'
+				 When l."channel"  = 'Canvassing'
+				 AND	sc."Region"  is not Null then sc."Region"
+				 When l."channel"  = 'Canvassing'
+				 AND	sc."Region"  is Null then l."location"
+				 When l."channel"  = 'Booths and Special Events'
+				 AND	l."Source Detail"  = 'Unknown' then 'Booths and Special Events'
+				 When l."channel"  = 'Booths and Special Events'
+				 AND	l."Source Detail"  is Not Null then l."Source Detail"
+				 Else l."SubChannel"
+			 End as "Sub Channel",
+		 
+			Case
+				 when l."ready to pay"  = 'Yes' Then 1
+				 else 0
+			 end as "Ready to pay",
+		 
+			case
+				 when l."Sales Consultant Role"  like '%Trainee%' THEN 'Solar Academy'
+				 else 'Others'
+			 end as "Sub-category",
+		 
+			case
+				 when l."channel"  = 'Canvassing' then 'Canvassing'
+				 when l."channel"  = 'Retail' then 'Retail'
+				 Else 'Rest'
+			 End AS "RCR",
+		 
+			case
+				 when d."channel"  IN ( 'Digital'  , 'Sunnova'  , 'Inbound'  , 'Referral'  , 'PR Referral'  ) Then 'Marketing'
+				 when d."channel"  IN ( 'Canvassing'  ) Then 'Canvassing'
+				 when d."channel"  IN ( 'Retail'  , 'Field Sales'  , 'Booths and Special Events'  ) Then 'Booths and Special Events'
+				 Else 'Unknown'
+			 End AS 'Team structure',
+		 
+			case
+				 when d."Language Preference"  like '%English%' then 'English'
+				 when d."Language Preference"  like '%Spanish%' then 'Spanish'
+				 else d."Language Preference"
+			 end as "Language",
+		 d."Sunnova Lead Source" as "Sunnova Lead Source",
+		 d."Office Location" as "Office Location",
+		 
+			case
+				 When d."Store Number"  LIKE '%HOME DEPOT%' THEN d."Store Number"
+				 When d."Store Number"  LIKE '%Home Depot%' THEN d."Store Number"
+				 When d."Store Number"  LIKE '%ICON Home Depot%' THEN d."Store Number"
+				 When d."Store Number"  LIKE '%home depot%' THEN d."Store Number"
+				 else 'Others'
+			 End as "Store Number",
+		 d."Lead Source Id" as 'Lead Source Id',
+		 
+			Case
+				 WHEN d."Lead Source"  IN ( 'AMG Webform'  , 'Dataman Group'  , 'FL - LP'  , 'Facebook/Instagram'  , 'Facebook LeadGen'  , 'WHF Webform'  , 'Facebook Website Leads'  , 'Google Ads'  , 'Paid Media Catch All'  , 'Tesla Retro Fit'  ) THEN 'Digital'
+				 WHEN l."Lead Source"  LIKE '%Facebook%' THEN 'Digital'
+				 WHEN d."Lead Source"  IN ( 'Windmar Website'  , 'website'  , 'Website PopUp'  ) THEN 'Direct'
+				 WHEN d."Lead Source"  IN ( 'Organic Search'  , 'Organic'  ) THEN 'Organic'
+				 WHEN d."Lead Source"  = 'Call In' THEN 'Inbound'
+				 else Null
+			 end as "SEO Channels",
+		 
+			Case
+				 When d."Lead Source"  like 'Academy' then 'Solar Academy'
+				 When d."Lead Source"  like 'Facebook LeadGen' then 'Meta'
+				 When d."Lead Source"  like 'Facebook Website Leads' then 'Meta'
+				 When d."Lead Source"  like 'website' then 'Website'
+				 When d."Lead Source"  like 'Facebook/Instagram' then 'Meta/Instagram'
+				 When d."Lead Source"  like 'Fair and Festivals' then 'Fairs and Festivals'
+				 When d."Lead Source"  like 'Fairs and Festivals' then 'Fairs and Festivals'
+				 When d."Lead Source"  like 'Lead Source' then 'None'
+				 When d."Lead Source"  like 'Lease - Canvassers' then 'Canvassing'
+				 When d."Lead Source"  like 'Organic Search' then 'SEO - Organic Search'
+				 When d."Lead Source"  like 'Other' then 'None'
+				 When d."Lead Source"  like 'Website PopUp' then 'SEO - Organic Search'
+				 When d."Lead Source"  like 'Windmar Website' then 'SEO - Organic Search'
+				 when d."Lead Source"  like 'Solar Cheat Code' then 'Solar Direct Now'
+				 when d."Lead Source"  like 'Best Company' then 'Best Company'
+				 when d."Lead Source"  like 'Demand IQ' then 'Demand IQ'
+				 when d."Lead Source"  like 'Red Ventures' then 'Red Ventures'
+				 else d."Lead Source"
+			 end as "Sub-Channel",
+		 'Sold' as "Status",
+		 'Contact' as 'Lead Type',
+		 'Sold' as "Lead Side Status",
+		 NULL as "Appointment Set Date",
+		 d."Appointment Date" as "Appointment Date/Time",
+		 d."Closing Date" as "Closing Date",
+		 d."Installation Completed Date" as "Installation Completed Date",
+		 null as "Appointment Status - Did an Appointment Happen ?",
+		 sc."New Consultant" as new_consultant,
+		 sc."Sales Rep" as "Sales Consultant",
+		 sc."Primary Rep Name" as "Primary Rep Name",
+		 sc."Second Line" as "Secondary Rep Name",
+		 sc."Id" as "Consultant Id",
+		 sc."Sales Rep Role" as "Role",
+		 st."Sales team role" As "Sales assits role",
+		 st."Sales team name" AS "Sales assist name",
+		 sc."Primary Rep Role" as "Primary Rep Role",
+		 
+			CASE
+				 WHEN l."Sales Rabbit Office"  = 'VAN 1 Academy Orl' THEN 'VAN 1 Academy Orlando'
+				 WHEN l."Sales Rabbit Office"  = 'VAN 2 Academy Orl' THEN 'VAN 2 Academy Orlando'
+				 ELSE l."Sales Rabbit Office"
+			 END AS "Sales Rabbit Office",
+		 
+			CASE
+				 WHEN LOWER(d."Driver")  IN ( 'julio cesar'  ) THEN 'Julio Cesar'
+				 WHEN LOWER(d."Driver")  IN ( 'alejandro ustariz'  ) THEN 'Alejandro Ustariz'
+				 WHEN LOWER(d."Driver")  IN ( 'carlos mateo'  ) THEN 'Carlos Mateo'
+				 WHEN LOWER(d."Driver")  IN ( 'derrick arnett'  , 'derrick arnet'  ) THEN 'Derrick Arnett'
+				 WHEN LOWER(d."Driver")  IN ( 'benjamin alejandro'  , 'benjaman alejandro'  , 'ben alejandro'  ) THEN 'Benjamin Alejandro'
+				 WHEN LOWER(d."Driver")  IN ( 'benjamin (orl)'  ) THEN 'Benjamin Alejandro'
+				 WHEN LOWER(d."Driver")  IN ( 'jorge ayala'  , 'jorge ayala-'  ) THEN 'Jorge Ayala'
+				 WHEN LOWER(d."Driver")  IN ( 'jose molina'  , 'jose molina'  ) THEN 'Jose Molina'
+				 WHEN LOWER(d."Driver")  IN ( 'richard vasquez'  , 'richard vazquez'  ) THEN 'Richard Vasquez'
+				 WHEN LOWER(d."Driver")  IN ( 'ricky galvan'  ) THEN 'Ricky Galvan'
+				 WHEN LOWER(d."Driver")  IN ( 'german salazar'  ) THEN 'German Salazar'
+				 WHEN LOWER(d."Driver")  IN ( 'rigo benitez'  ) THEN 'Rigo Benitez'
+				 WHEN LOWER(d."Driver")  IN ( 'nathanial martin'  ) THEN 'Nathanial Martins'
+				 WHEN LOWER(d."Driver")  IN ( 'marcelo pereira'  ) THEN 'Marcelo Pereira'
+				 WHEN LOWER(d."Driver")  IN ( 'ricardo galvan'  ) THEN 'Ricardo Galvan'
+				 WHEN LOWER(d."Driver")  IN ( 'curtis friend'  ) THEN 'Curtis Friend'
+				 WHEN LOWER(d."Driver")  IN ( 'alex almonte'  ) THEN 'Alex Almonte'
+				 WHEN LOWER(d."Driver")  IN ( 'johnathan colon'  ) THEN 'Johnathan Colon'
+				 WHEN LOWER(d."Driver")  IN ( 'luis mercado'  ) THEN 'Luis Mercado'
+				 WHEN LOWER(d."Driver")  IN ( 'none'  ) THEN 'None'
+				 ELSE d."Driver"
+			 end as "Canvasser_Driver",
+		 d."Source Detail" as "Source Detail",
+		 
+			case
+				 when d."Office Location"  like '%Orl%' then 'Orlando'
+				 when d."Office Location"  like '%Tampa%' then 'Tampa'
+				 when d."Office Location"  like '%Miami%' then 'Miami/Keys'
+				 when d."Office Location"  like '%Miami/Keys%' then 'Miami/Keys'
+				 when d."Office Location"  like '%Palm%' then 'Miami/Keys'
+				 else s."Region"
+			 END AS "location",
+		 d."Sales Consultant ID" as "Sales Consultant ID",
+		 d."Sales Consultant Email" as "Sales Consultant Email",
+		 d."Sales Consultant Role" as "Sales Consultant Role",
+		 sc."Sales Rep Inactive" as "Inactive",
+		 ss."Sales Rep Inactive" as "Inactive Advisor",
+		 s."Sales Rep" as "Sales Team Name",
+		 sc."Created Time" as "Date Seller Created",
+		 sc."1st Trainee Sale" as "1st Trainee Sale",
+		 sc."2nd Trainee Sale" as "2nd Trainee Sale",
+		 sc."3rd Trainee Sale" as "3rd Trainee Sale",
+		 s."Sales Rep Role" as 'Sales Team Role',
+		 s."Sales Team Owner Name" as "Primary Override Rep",
+		 d."Sales Rep" as "Solar Advisor",
+		 s."Primary Rep Name" as "Manager",
+		 
+			CASE
+				 when s."Secondary Rep Name"  is null
+				 AND	s."Sales Rep Role"  = 'Branch Manager' then s."Sales Rep"
+				 when s."Secondary Rep Name"  is null
+				 AND	d."Sales Consultant"  IN ( 'Abdiel Mendez'  , 'Edgar Castilla'  , 'Niselio Garcia'  ) then d."Sales Consultant"
+				 else s."Secondary Rep Name"
+			 end as "Supervisor",
+		 sc."Region" as "Region",
+		 sc."Consultant Contract" as "Consultant Contract",
+		 DATEDIFF(GREATEST(sc."1st Trainee Sale", sc."2nd Trainee Sale", sc."3rd Trainee Sale"), sc."Created Time") AS "Days to Graduate",
+		 
+			CASE
+				 WHEN d."Closing Date"  BETWEEN LEAST(sc."1st Trainee Sale", sc."2nd Trainee Sale", sc."3rd Trainee Sale")  AND  GREATEST(sc."1st Trainee Sale", sc."2nd Trainee Sale", sc."3rd Trainee Sale") THEN 1
+				 ELSE 0
+			 END AS 'Leads to Graduate',
+		 
+			CASE
+				 WHEN d."Contact Center Rep Name"  is null THEN l."Telesales Rep Name"
+				 ELSE d."Contact Center Rep Name"
+			 END as "Telesales Name",
+		 
+			case
+				 when us."Profile Name"  like '%Tele%' then 1
+				 when u."Profile Name"  like '%Tele%' then 1
+				 when us."Profile Name"  like '%Kaisy special%' then 1
+				 when u."Profile Name"  like '%Kaisy special%' then 1
+				 when l."Telesales Rep"  IN ( 'Sirena Logan-Burns'  , 'Omayra Mollinedo Cancel'  , 'Kaisy Zayas'  )
+				 OR	l."Lead Owner Name"  IN ( 'Sirena Logan-Burns'  , 'Omayra Mollinedo Cancel'  , 'Kaisy Zayas'  ) THEN 1
+				 else 0
+			 end as "isCallCenter",
+		 d."Sales Assist." as "Sales Assist",
+		 
+			CASE
+				 WHEN d."Sales Assist."  = sc."Primary Rep Name" then 'Yes'
+				 WHEN d."Sales Assist."  = sc."Secondary Rep Name" then 'Yes'
+				 else 'No'
+			 end as 'Assist to Line',
+		 
+			case
+				 when l."Telesales Rep"  is null then l."Lead Owner Name"
+				 else l."Telesales Rep"
+			 end as "Owner",
+		 NULL AS "Lead Notes",
+		 null as "Last Contacted Date",
+		 d."Amount" as "Revenue",
+		 d."Product" as "Products",
+		 d."Pipeline" as "Pipeline",
+		 d."System Size (kW)" as "System Size (kW)",
+		 REPLACE(REPLACE(REPLACE(d."Battery Type", 'Generac', ''), 'Enphase Encharge 3', ''), 'N/A', '') AS "Battery Type",
+		 d."Amount" as "Amount",
+		 d."In service complete to" AS "In service complete to",
+		 
+			case
+				 when d."Products"  like '%Roofing%' then 1
+				 else 0
+			 end as "isRoofing",
+		 
+			case
+				 when d."Products"  like '%Tesla%' then 1
+				 when d."Products"  like '%Batteri%' then 1
+				 when d."Products"  = 'Enphase Encharge 3' then 1
+				 else 0
+			 end as "isBattery",
+		 
+			case
+				 when l."Products"  like '%PV%'
+				 OR	d."Products"  like '%PV%' then 1
+				 when l."Products"  like '%Pannels%'
+				 OR	d."Products"  like '%Pannels%' then 1
+				 when l."Products"  like '%Generator%'
+				 OR	d."Products"  like '%Generator%' then 1
+				 when l."Products"  IN ( 'Generac Essentials'  , 'Generac Extended Power'  , 'Generac Power Plus'  , 'Generac Essential'  )
+				 OR	d."Products"  IN ( 'Generac Essentials'  , 'Generac Extended Power'  , 'Generac Power Plus'  , 'Generac Essential'  ) then 1
+				 else 0
+			 end as "isPV",
+		 
+			case
+				 when (d."Products"  like '%Roofing%'
+				 AND	d."Stage"  like '%Closed Lost%') then 1
+				 else 0
+			 end as "isCancelled-Roofing",
+		 
+			case
+				 when (d."Products"  like '%Tesla%'
+				 AND	d."Stage"  like '%Closed Lost%') then 1
+				 else 0
+			 end as "isCancelled-Battery",
+		 
+			case
+				 when (d."Products"  like '%PV%'
+				 AND	d."Stage"  like '%Closed Lost%') then 1
+				 else 0
+			 end as "isCancelled-PV",
+		 1 as "isLead",
+		 1 as "isDispo",
+		 1 as "isAppointment",
+		 1 as "Appointment Confirmed",
+		 1 as "isSitdown",
+		 1 as "isDeal",
+		 
+			case
+				 when lower(l."bonus status (calidad)")  like 'aprobado%' then 1
+				 else 0
+			 end as isApprovedQuality,
+		 0 as "isPending",
+		 0 as "Evaluating Proposal",
+		 0 as "Follow Up",
+		 d."Appointment Result" as "Appointment Result",
+		 
+			CASE
+				 WHEN d."Stage"  = 'Closed Lost' then 1
+				 ELSE 0
+			 END AS "isCancelled",
+		 1 as "isContact",
+		 
+			CASE
+				 WHEN l."Appointment DateTime"  < CURDATE()
+				 AND	l."Appointment DateTime"  > l."Created Time" THEN DATEDIFF(l."Appointment DateTime", l."Created Time")
+				 ELSE NULL /* No hace la diferencia si Appointment DateTime es posterior o igual a la fecha actual*/
+			 END AS "Days to Appointment",
+		 null AS "Elapsed days",
+		 d."Time Frame" as "Time Frame",
+		 
+			CASE
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(MONTH FROM l."Created Time")  < EXTRACT(MONTH FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(DAY FROM l."Created Time")  <= EXTRACT(DAY FROM CAST(NOW() AS DATE)) THEN 'Current year till today'
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(MONTH FROM l."Created Time")  = EXTRACT(MONTH FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(DAY FROM l."Created Time")  <= EXTRACT(DAY FROM CAST(NOW() AS DATE)) THEN 'Current year till today'
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE)) - 1
+				 AND	EXTRACT(MONTH FROM l."Created Time")  <= EXTRACT(MONTH FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(DAY FROM l."Created Time")  <= EXTRACT(DAY FROM CAST(NOW() AS DATE)) THEN 'Current year till today'
+				 ELSE NULL
+			 END AS "Creado por año",
+		 
+			CASE
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE))
+				 AND	EXTRACT(MONTH FROM l."Created Time")  <= EXTRACT(MONTH FROM CAST(NOW() AS DATE)) THEN 'Current Year'
+				 WHEN EXTRACT(YEAR FROM l."Created Time")  = EXTRACT(YEAR FROM CAST(NOW() AS DATE)) - 1
+				 AND	EXTRACT(MONTH FROM l."Created Time")  <= EXTRACT(MONTH FROM CAST(NOW() AS DATE)) THEN 'Current Year'
+				 ELSE NULL
+			 END AS "Created year current month",
+		 1 as "Appointment Date to Today",
+		 l."Lead Lost Reason" as "Lead Lost Reason",
+		 l."Appointment Type" as "Appointment Type",
+		 d."SAP ID" as "Solar Advisor Id",
+		 d."Trainee ID" as "trainee ID",
+		 d."Trainee Name" as "Trainee Name",
+		 ss."District" as "District",
+		 sc."Director" as "Sales Director",
+		 l."Windmar APP" as "Windmar APP",
+		 sc."Language" as "Sales Language",
+		 sc."Region" as "Sales Region",
+		 d."Active Sales" as "Active Sales.",
+		 l."Lead Worked" as "Lead Worked",
+		 l."Last Modified by Lead Owner" as "Last Modified by Lead Owner",
+		 d."NTP From" AS "NTP From",
+		 d."NTP To" AS "NTP To",
+		 d."Pre-Engineering  From" as "Pre-Engineering  From",
+		 d."Pre-Engineering  To" as "Pre-Engineering  To",
+		 d."Engineering" as "Engineering",
+		 d."Engineering From" as "Engineering From",
+		 d."Engineering To" as "Engineering To",
+		 d."Project Coordinator" AS 'Client Coordinator',
+		 d."Permit Received Date" AS 'Permit Received Date',
+		 d."Date Deal Went Closed Lost" as "Date Deal Went Closed Lost",
+		 d."Permit To" as "Permit To",
+		 d."Permit From" as "Permit From",
+		 d."Utility To" as "Utility To",
+		 d."Utility From" as "Utility From",
+		 d."In Service to" as "In Service to",
+		 d."In Service From" as "In Service From",
+		 d."Date Deal Went Closed Lost" as "Date Closed Lost",
+		 d."Finance Choice" as finance_choice,
+		 NULL AS "Creation_to_2nd_Sale",
+		 NULL AS "Creation_to_3rd_Sale",
+		 NULL AS "1st_sale_date",
+		 NULL AS "2nd_sale_date",
+		 NULL AS "3rd_sale_date",
+		 NULL AS "4th_Sale_date",
+		 NULL AS "Creation_to_4thSale",
+		 null as lead_created_time,
+		 d."closed lost reason" AS "Closed lost reason",
+		 st."windmar way start date" AS "windmar way start date",
+		 d."Canvasser Driver - Clean" AS "Canvasser Driver Name",
+		 d."Canvasser Driver City - Clean" AS "Canvasser Driver City"
+FROM  Deals d
+JOIN "Deal rw" l ON l.deal_id  = d.Id
+	 AND	l.rw  = 1 
+LEFT JOIN "Q_Sales Team" AS  s ON d."Deal Owner Name"  = s."Sales Rep" 
+LEFT JOIN "Q_Sales Team" AS  ss ON d."SAP ID"  = ss."Employee Id" 
+LEFT JOIN "Q_Sales Team" sc ON d."Sales Consultant ID"  = sc."Employee Id" 
+LEFT JOIN "Sales Team" AS  st ON st."employee ID"  = d."Sales Assist. Employee ID" 
+LEFT JOIN "Users" u ON u."Id"  = l."lead Owner_1" 
+LEFT JOIN "Q_users_full_name" us ON us."Full Name"  = l."Telesales Rep"  
+ 
