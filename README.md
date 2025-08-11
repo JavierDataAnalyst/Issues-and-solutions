@@ -27,7 +27,7 @@ Trabajo mucho con **window functions**, **CTEs**, deduplicación, estandarizaci�
 **SQL** (PostgreSQL/MySQL/Zoho), **Power BI**, **Zoho Analytics**, **Python (pandas)**.
 
 ## Contacto
-**LinkedIn:** `[tu_linkedin]` · **Email:** `[tu_email]`
+**LinkedIn:** `[https://www.linkedin.com/in/javier-daza-5201b1176/]` · **Email:** `[javier.m.daza.p@gmail.com]`
 
 
 
