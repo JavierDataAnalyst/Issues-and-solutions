@@ -1,0 +1,275 @@
+SELECT
+		 'Deals' AS "Side",
+		 d.id AS id,
+		 d."Link CRM" AS "Link CRM",
+		 d."Deal Name" as "Name",
+		 d."Closing Date" as "Date",
+		 NULL AS "Lead status",
+		 d."Pipeline" as "Pipeline",
+		 d."Stage" AS "Etapa Deal",
+		 d."Contact Phone Number" AS "Telefono Cliente",
+		 d."Customer Email" AS "Correo Cliente",
+		 st."Sales Team Name" AS Vendedor,
+		 st."Status" AS "Estado Vendedor",
+		 
+			/* s2."Sales Team Name" AS "Recruited by",
+		 s2."Phone" AS "Phone reclutador",
+		 s2."Status" AS "Status del Reclutador / Mentor",
+		 st."Upline Level 2" AS "Upline level 2 vendedor",
+		 up2."Status" AS "Upline level 2 Status", up2."Phone" AS "Upline 2 phone",
+		 st."Upline Level 3" AS "Upline level 3 vendedor",
+		 up3."Phone" AS "Upline 3 phone",
+		 up3."Status" AS "Upline level 3 Status", st."Upline Level 4" AS "Upline level 4 vendedor",
+		 up4."Phone" AS "Upline 4 phone",
+		 
+			 up4."Status" AS "Upline level 4 Status",
+		 
+			q."Vendedor" as "Vendedor Alterno",
+		 q."Estado Vendedor" as "Estado Vendedor Alterno",*/
+			CASE
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN st."Upline Level 2"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN st."Upline Level 3"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN st."Upline Level 4"
+				 ELSE s2."Sales Team Name"
+			 END AS "upline inmediato",
+		 
+			CASE
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN up2."Phone"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN up3."Phone"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN up4."Phone"
+				 ELSE s2."Phone"
+			 END AS "Phone upline inmediato",
+		 
+			CASE
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN up2."Status"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN up3."Status"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN up4."Status"
+				 ELSE s2."Status"
+			 END AS "Status upline inmediato"
+FROM (	SELECT
+			 d1.Id as id,
+			 d1."Link CRM" AS "Link CRM",
+			 d1."Deal Name" as "Deal Name",
+			 d1."Closing Date" as "Closing Date",
+			 d1."Customer Email" as "Customer Email",
+			 d1."Pipeline" as "Pipeline",
+			 d1."Stage" as "Stage",
+			 d1."Sales Rep" as "Sales Rep",
+			 right(REPLACE(REPLACE(REPLACE(REPLACE(d1."Contact Phone Number", '(', ''), ')', ''), ' ', ''), '-', ''), 10) as "Contact Phone Number",
+			 ROW_NUMBER() OVER(PARTITION BY right(REPLACE(REPLACE(REPLACE(REPLACE(d1."Contact Phone Number", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  ORDER BY d1."Closing Date" DESC ) AS rn,
+			 COUNT(*) OVER(PARTITION BY right(REPLACE(REPLACE(REPLACE(REPLACE(d1."Contact Phone Number", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  ) AS cnt
+	FROM  Deals d1
+LEFT JOIN "Sales Team" s ON s.Id  = d1."Sales Rep"  
+	WHERE	 d1."Pipeline"  NOT LIKE '%Commercial%'
+	 AND	s."Status"  IN ( 'Renuncio'  , 'Competencia'  )
+) d
+LEFT JOIN "Sales Team" st ON st.Id  = d."Sales Rep" 
+LEFT JOIN "Sales Team" s2 ON s2.Id  = st."Recruited By" 
+LEFT JOIN "Sales Team" up2 ON up2.Id  = s2."Recruited By" 
+LEFT JOIN "Sales Team" up3 ON up3.Id  = up2."Recruited By" 
+LEFT JOIN "Sales Team" up4 ON up4.Id  = up3."Recruited By" 
+LEFT JOIN "Q05.1 - Subconsulta Deal con Vendedor Activo" q ON q."Telefono Cliente"  = d."Contact Phone Number"  
+WHERE	 d.rn  = 1
+ AND	q."Vendedor"  IS NULL
+UNION ALL
+ SELECT
+		 'Leads' AS "Side",
+		 l.id AS id,
+		 l."Link CRM" AS "Link CRM",
+		 l."Full name" as "Name",
+		 l."created time" as "Date",
+		 l."Lead status" AS "Lead status",
+		 NULL AS "Pipeline",
+		 NULL AS "Etapa Deal",
+		 l."Phone" AS "Telefono Cliente",
+		 l."Correo Cliente" AS "Correo Cliente",
+		 st."Sales Team Name" AS Vendedor,
+		 st."Status" AS "Estado Vendedor",
+		 
+			/* s2."Sales Team Name" AS "Recruited by",
+		 s2."Phone" AS "Phone reclutador",
+		 s2."Status" AS "Status del Reclutador / Mentor",
+		 st."Upline Level 2" AS "Upline level 2 vendedor",
+		 up2."Phone" AS "Upline 2 phone",
+		 up2."Status" AS "Upline level 2 Status", st."Upline Level 3" AS "Upline level 3 vendedor",
+		 up3."Phone" AS "Upline 3 phone",
+		  up3."Status" AS "Upline level 3 Status", st."Upline Level 4" AS "Upline level 4 vendedor",
+		 up4."Phone" AS "Upline 4 phone",
+		 
+			 up4."Status" AS "Upline level 4 Status",
+		 
+			aa."Vendedor" AS "Vendedor Alterno",
+		 aa."Estado Vendedor" AS "Estado Alterno",*/
+			CASE
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN st."Upline Level 2"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN st."Upline Level 3"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN st."Upline Level 4"
+				 ELSE s2."Sales Team Name"
+			 END AS "upline inmediato",
+		 
+			CASE
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN up2."Status"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN up3."Status"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN up4."Status"
+				 ELSE s2."Phone"
+			 END AS "Phone upline inmediato",
+		 
+			CASE
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN up2."Status"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN up3."Status"
+				 WHEN s2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN up4."Status"
+				 ELSE s2."Status"
+			 END AS "Status upline inmediato"
+FROM (	SELECT
+			 l1.Id as id,
+			 l1."Link CRM" AS "Link CRM",
+			 l1."Full Name" as "Full name",
+			 l1."Created Time" as "created time",
+			 l1."Email" AS "Correo Cliente",
+			 l1."Lead Status" AS "Lead status",
+			 l1."Sales Rep" as "Sales Rep",
+			 l1."Caso Vendido - Anker" AS "Caso vendido - Anker",
+			 l1."Caso Vendido Deals" AS "Caso Vendido Deals",
+			 right(REPLACE(REPLACE(REPLACE(REPLACE(l1."Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10) as "Phone",
+			 ROW_NUMBER() OVER(PARTITION BY right(REPLACE(REPLACE(REPLACE(REPLACE(l1."Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  ORDER BY l1."Created Time" DESC ) AS rn,
+			 COUNT(*) OVER(PARTITION BY right(REPLACE(REPLACE(REPLACE(REPLACE(l1."Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  ) AS cnt
+	FROM  Leads l1
+LEFT JOIN "Sales Team" s ON s.Id  = l1."Sales Rep" 
+LEFT JOIN "Deals" D2 ON right(REPLACE(REPLACE(REPLACE(REPLACE(D2."Contact Phone Number", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  = right(REPLACE(REPLACE(REPLACE(REPLACE(l1."Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10) 
+LEFT JOIN "PPS Sales" p1 ON right(REPLACE(REPLACE(REPLACE(REPLACE(p1."Customer Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  = right(REPLACE(REPLACE(REPLACE(REPLACE(l1."Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  
+	WHERE	 l1."Lead Status"  NOT IN ( 'Caso Vendido'  , 'Credit Fail'  )
+	 AND	s."Status"  IN ( 'Renuncio'  , 'Competencia'  )
+	 AND	D2."Contact Phone Number"  is null
+	 AND	p1."Customer Phone"  iS NULL
+	 AND	l1."Caso Vendido Deals"  IS NULL
+	 AND	l1."Caso Vendido - Anker"  IS NULL
+) l
+LEFT JOIN "Sales Team" st ON st.Id  = l."Sales Rep" 
+LEFT JOIN "Sales Team" s2 ON s2.Id  = st."Recruited By" 
+LEFT JOIN "Sales Team" up2 ON up2.Id  = s2."Recruited By" 
+LEFT JOIN "Sales Team" up3 ON up3.Id  = up2."Recruited By" 
+LEFT JOIN "Sales Team" up4 ON up4.Id  = up3."Recruited By" 
+LEFT JOIN "Q06.1 - Subconsulta Vendedor Activo" aa ON aa."Telefono Cliente"  = l."Phone"  
+WHERE	 l.rn  = 1
+ AND	aa."Vendedor"  IS NULL
+UNION ALL
+ SELECT
+		 'Pps' AS "Side",
+		 pps.id AS id,
+		 pps."Link CRM" AS "Link CRM",
+		 pps."Deal Name" as "Name",
+		 pps."Closing Date" as "Date",
+		 NULL AS "Lead status",
+		 NULL as "Pipeline",
+		 pps."Stage" AS "Etapa Deal",
+		 pps."Customer phone" AS "Telefono Cliente",
+		 pps."Customer Email" AS "Correo Cliente",
+		 st1."Sales Team Name" AS Vendedor,
+		 st1."Status" AS "Estado Vendedor",
+		 
+			/*s3."Sales Team Name" AS "Recruited by",
+		 s3."Phone" AS "Phone reclutador",
+		 s3."Status" AS "Status del Reclutador / Mentor",
+		 st1."Upline Level 2" AS "Upline level 2 vendedor",
+		 up2."Phone" AS "Upline 2 phone",
+		 up2."Status" AS "Upline level 2 Status", st1."Upline Level 3" AS "Upline level 3 vendedor",
+		 up3."Phone" AS "Upline 3 phone",
+		 up3."Status" AS "Upline level 3 Status", st1."Upline Level 4" AS "Upline level 4 vendedor",
+		 up4."Phone" AS "Upline 4 phone",
+		 
+		up4."Status" AS "Upline level 4 Status",
+		 
+			 ps."Vendedor" as "Vendedor Alterno",
+		 ps."Estado Vendedor" as "Estado Vendedor Alterno",*/
+			CASE
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN st1."Upline Level 2"
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN st1."Upline Level 3"
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN st1."Upline Level 4"
+				 ELSE s3."Sales Team Name"
+			 END AS "upline inmediato",
+		 
+			CASE
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN st1."Upline Level 2"
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN st1."Upline Level 3"
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN st1."Phone"
+				 ELSE s3."Phone"
+			 END AS "Phone upline inmediato",
+		 
+			CASE
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  = 'Activo' THEN st1."Upline Level 2"
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  = 'Activo' THEN st1."Upline Level 3"
+				 WHEN s3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up2."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  )
+				 AND	up3."Status"  IN ( 'Inactivo'  , 'Renuncio'  , 'Competencia'  ) THEN st1."Status"
+				 ELSE s3."Status"
+			 END AS "Status upline inmediato"
+FROM (	SELECT
+			 p1.Id as id,
+			 p1."PPS Sales Name" as "Deal Name",
+			 p1."Link CRM" as "Link CRM",
+			 p1."Closing Date" as "Closing Date",
+			 p1."Customer Email" as "Customer Email",
+			 p1."PPS Stage" as "Stage",
+			 p1."Sales Rep" as "Sales Rep",
+			 right(REPLACE(REPLACE(REPLACE(REPLACE(p1."Customer Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10) as "Customer phone",
+			 ROW_NUMBER() OVER(PARTITION BY right(REPLACE(REPLACE(REPLACE(REPLACE(p1."Customer Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  ORDER BY p1."Closing Date" DESC ) AS rn,
+			 COUNT(*) OVER(PARTITION BY right(REPLACE(REPLACE(REPLACE(REPLACE(p1."Customer Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  ) AS cnt
+	FROM  "PPS Sales" p1
+LEFT JOIN "Sales Team" s4 ON s4.Id  = p1."Sales Rep" 
+LEFT JOIN "Deals" d1 ON right(REPLACE(REPLACE(REPLACE(REPLACE(d1."Contact Phone Number", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  = right(REPLACE(REPLACE(REPLACE(REPLACE(p1."Customer Phone", '(', ''), ')', ''), ' ', ''), '-', ''), 10)  
+	WHERE	 d1."Contact Phone Number"  IS NULL
+	 AND	s4."Status"  IN ( 'Renuncio'  , 'Competencia'  , 'Inactivo'  )
+) pps
+LEFT JOIN "Sales Team" st1 ON st1.Id  = pps."Sales Rep" 
+LEFT JOIN "Sales Team" s3 ON s3.Id  = st1."Recruited By" 
+LEFT JOIN "Sales Team" up2 ON up2.Id  = s3."Recruited By" 
+LEFT JOIN "Sales Team" up3 ON up3.Id  = up2."Recruited By" 
+LEFT JOIN "Sales Team" up4 ON up4.Id  = up3."Recruited By" 
+LEFT JOIN "Q07.1 - Subconsulta Vendedor Activo PPS" ps ON ps."Telefono Cliente"  = pps."Customer phone"  
+WHERE	 pps.rn  = 1
+ AND	ps."Vendedor"  IS NULL
+ 
+ 
