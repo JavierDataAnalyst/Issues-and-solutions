@@ -1,0 +1,19 @@
+WITH email_referidos AS (SELECT
+		 d1.Id AS id,
+		 d1."Customer Email" AS referidor_email,
+		 d1."Main Phone_1" AS phone_referidor,
+		 COUNT(d2.Id) AS total_referidos
+FROM  "Deals" d1
+LEFT JOIN "Deals" d2 ON d1.Id  = d2."Customer Referral Source Deal"  
+GROUP BY d1."Customer Email",
+	 d1."Main Phone_1",
+	  id) ,
+email_seleccionado AS (SELECT
+		 id,
+		 referidor_email,
+		 phone_referidor,
+		 ROW_NUMBER() OVER(PARTITION BY phone_referidor  ORDER BY total_referidos DESC ) AS rn
+FROM  email_referidos)
+SELECT *
+FROM  email_seleccionado 
+WHERE	 rn  = 1
