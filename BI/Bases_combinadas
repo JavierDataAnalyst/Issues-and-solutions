@@ -1,0 +1,43 @@
+SELECT
+		 'Deals' AS "Section",
+		 d.Id AS id,
+		 d."Main Phone_1" AS "Phone",
+		 CONCAT('1', right_string(REPLACE(REPLACE(REPLACE(REPLACE(replace(d."Main Phone_1", '(', ''), ')', ''), '+', ''), ' ', ''), '-', ''), 10)) AS "Botmaker_phone",
+		 right_string(REPLACE(REPLACE(REPLACE(REPLACE(replace(d."Main Phone_1", '(', ''), ')', ''), '+', ''), ' ', ''), '-', ''), 10) AS "phone_clean",
+		 d."Customer Email" AS "customer email",
+		 d."Preferred Name" AS "Full name",
+		 d."Stage" AS "stage",
+		 d."Pipeline" AS "pipeline",
+		 d."Closing Date" AS "closing date",
+		 s.Id AS "sales rep",
+		 s."Sales Team Name" AS "Sales team name",
+		 s."Inactive" AS Inactive_status,
+		 s."Phone Number" AS "phone number",
+		 s."Status" AS "status sales team",
+		 COUNT(*) OVER(PARTITION BY d."Main Phone_1"  ) AS total_deals_phone
+FROM  "Deals" d
+LEFT JOIN "Sales Team" s ON s.Id  = d."Sales Rep"  
+WHERE	 d."Main Phone_1"  IS NOT NULL
+ AND	d."Pipeline"  NOT IN ( 'Commercial Solar'  )
+UNION ALL
+ SELECT
+		 'PPS' AS "Section",
+		 "OQ45-pps_clean".Id AS Id,
+		 "OQ45-pps_clean"."phone" AS phone,
+		 "Botmaker_phone" AS "Botmaker_phone",
+		 "phone_clean" AS "phone_clean",
+		 "Customer Email" AS "Customer Email",
+		 "preferred name" AS "preferred name",
+		 "stage" AS "stage",
+		 pipeline AS pipeline,
+		 "Closing Date" AS "Closing date",
+		 ss.Id AS "sales rep",
+		 ss."Sales Team Name" AS "Sales team name",
+		 ss."Inactive" AS Inactive_status,
+		 ss."Phone Number" AS "phone number",
+		 ss."Status" AS "sales team status",
+		 COUNT(*) OVER(PARTITION BY "OQ45-pps_clean"."phone_clean"  ) AS total_deals_phone
+FROM  "OQ45-pps_clean"
+LEFT JOIN "Sales Team" ss ON ss.Id  = "OQ45-pps_clean"."Sales Rep"  
+WHERE	 "phone_clean"  IS NOT NULL
+ 
