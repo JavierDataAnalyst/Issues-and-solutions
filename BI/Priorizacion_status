@@ -1,0 +1,20 @@
+WITH todos AS (SELECT
+		 cd.*,
+		 s."Status" AS "status"
+FROM  "OQ46-combined" cd
+LEFT JOIN "Sales Team" s ON s.Id  = cd."sales rep"  
+WHERE	 cd."pipeline"  NOT LIKE '%Commercial%') ,
+numerados AS (SELECT
+		 *,
+		 ROW_NUMBER() OVER(PARTITION BY "phone_clean"  ORDER BY 
+				CASE
+					 WHEN status  IN ( 'Activo,Prospectado'  ) THEN 1
+					 ELSE 2
+				 END,
+			 "closing date" DESC ) AS rn,
+		 COUNT(*) OVER(PARTITION BY "phone_clean"  ) AS cantidad
+FROM  todos)
+SELECT n.*
+FROM  numerados n 
+WHERE	 n.rn  = 1
+ AND	n.cantidad  > 2
