@@ -1,0 +1,47 @@
+SELECT
+		 1 AS mes_num,
+		 'January' AS mes_name
+UNION ALL
+ SELECT
+		 2,
+		 'February'
+UNION ALL
+ SELECT
+		 3,
+		 'March'
+UNION ALL
+ SELECT
+		 4,
+		 'April'
+UNION ALL
+ SELECT
+		 5,
+		 'May'
+UNION ALL
+ SELECT
+		 6,
+		 'June'
+UNION ALL
+ SELECT
+		 7,
+		 'July'
+UNION ALL
+ SELECT
+		 8,
+		 'August'
+UNION ALL
+ SELECT
+		 9,
+		 'September'
+UNION ALL
+ SELECT
+		 10,
+		 'October'
+UNION ALL
+ SELECT
+		 11,
+		 'November'
+UNION ALL
+ SELECT
+		 12,
+		 'December'
