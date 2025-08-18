@@ -1,5 +1,6 @@
-DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) - 1) DAY) AS fdm0,
-
+SELECT 
+DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) - 1) DAY) AS fdm0
+FROM Deals
 -- ¿Qué hace cada parte?
 
 CURDATE()
@@ -21,5 +22,4 @@ Con el ejemplo: 2025-08-18 - 17 días = 2025-08-01.
 Resultado: primer día del mes actual.
 
 AS fdm0
-Es el alias de la columna en el SELECT. Aquí el campo se llamará fdm0 (suele significar “first day of month (offset 0)”).
-El coma final , indica que probablemente hay más columnas en la lista del SELECT.
+Es el alias de la columna en el SELECT. Aquí el campo se llamará fdm0 (suele significar “first day of month (offset 0)”)
