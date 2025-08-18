@@ -1,0 +1,25 @@
+DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) - 1) DAY) AS fdm0,
+
+-- ¿Qué hace cada parte?
+
+CURDATE()
+Devuelve la fecha actual del servidor en tipo DATE (sin hora), por ejemplo 2025-08-18.
+
+DAY(CURDATE())
+Toma esa fecha y devuelve el día del mes como número entero. Con 2025-08-18 sería 18.
+
+(DAY(CURDATE()) - 1)
+Resta 1 para obtener cuántos días hay que retroceder desde hoy hasta el día 1 del mes.
+Ejemplo: 18 - 1 = 17.
+
+INTERVAL ... DAY
+Construye un intervalo de tiempo en días con ese número (en el ejemplo, 17 DAY).
+
+DATE_SUB(CURDATE(), INTERVAL ... DAY)
+Resta ese intervalo a la fecha actual.
+Con el ejemplo: 2025-08-18 - 17 días = 2025-08-01.
+Resultado: primer día del mes actual.
+
+AS fdm0
+Es el alias de la columna en el SELECT. Aquí el campo se llamará fdm0 (suele significar “first day of month (offset 0)”).
+El coma final , indica que probablemente hay más columnas en la lista del SELECT.
