@@ -1,6 +1,8 @@
 SELECT 
 DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) - 1) DAY) AS fdm0
 FROM Deals
+
+
 -- ¿Qué hace cada parte?
 
 CURDATE()
