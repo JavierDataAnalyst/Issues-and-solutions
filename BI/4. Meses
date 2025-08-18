@@ -1,6 +1,7 @@
 -- hay casos en los que quieres generar valores “a mano” sin depender de ninguna tabla. 
 -- UNION ALL lo que hace es juntar los resultados de varias consultas uno debajo del otro (concatenación de filas).
 -- Esta estructura sirve para organizarlo por número (días, meses, años, productos, empleados, ID, etc)
+-- Hacer joins con tablas reales, como cuando necesitas traer ventas agrupadas por mes pero quieres asegurar que salgan todos los meses aunque no haya ventas.
 SELECT
 		 1 AS mes_num,
 		 'January' AS mes_name
