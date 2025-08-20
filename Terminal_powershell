@@ -1,0 +1,2 @@
+With these patter I can see what are the data model that I did in supabase but now in PgAdmin in postgreSQL 
+psql -h localhost -U postgres -d mydb -f "C:\Users\Javier\Downloads\latest_plain.sql"
