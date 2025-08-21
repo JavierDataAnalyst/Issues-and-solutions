@@ -1,0 +1,143 @@
+WITH cantidad_referidos AS (SELECT
+		 COALESCE(COUNT(*), 0) AS cantidad_referidos,
+		 "Customer Referral Source Deal" AS referidor_id
+FROM  "Deals" 
+GROUP BY  "Customer Referral Source Deal") ,
+referidos_por_phone AS (SELECT
+		 dl."Main Phone_1" AS phone_referidor,
+		 COUNT(DISTINCT d2.Id) AS total_referidos_phone
+FROM  "Deals" dl
+JOIN "Deals" d2 ON dl.Id  = d2."Customer Referral Source Deal"  
+WHERE	 dl."Main Phone_1"  IS NOT NULL
+GROUP BY  dl."Main Phone_1")
+SELECT
+		 CONCAT('https://crm.zoho.com/crm/org699641359/tab/Potentials/', d2.Id) AS link_referido,
+		 d2.Id AS id_referido,
+		 d2."Deal Name" AS deal_referido,
+		 d2."Stage" AS stage_referido,
+		 d2."Pipeline" AS pipeline_referido,
+		 d2."Amount" AS amount_referido,
+		 d2."Closing Date" AS closing_date_referido,
+		 d2."Distrito" AS distrito_referido,
+		 d2."City" AS city_referido,
+		 /* Sales Team del referido*/ ST2."Sales Team Name" AS sales_team_referido,
+		 ST2."Seller Inactive" AS seller_inactive_referido,
+		 /* Referidor (deal padre)*/ dl.Id AS id_referidor,
+		 CONCAT('https://crm.zoho.com/crm/org699641359/tab/Potentials/', dl.Id) AS link_referidor,
+		 dl."Deal Name" AS deal_referidor,
+		 dl."Preferred Name" AS referidor_name,
+		 dl."Main Phone_1" AS phone_referidor,
+		 COALESCE(oq.referidor_email, dl."Customer Email") AS referidor_email,
+		 /* KPIs del referidor*/ COALESCE(cr.cantidad_referidos, 0) AS cantidad_referidos,
+		 COALESCE(rp.total_referidos_phone, 0) AS total_referidos_por_phone,
+		 
+			CASE
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  > 9 THEN 'VIP 10+'
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  BETWEEN 5  AND  9 THEN 'VIP 5 a 9 referidos'
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  BETWEEN 2  AND  4 THEN '2 a 4 referidos'
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  = 1 THEN '1 referido'
+				 ELSE 'Referidos 0'
+			 END AS "VIP STATUS",
+		 
+			CASE
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  > 9 THEN 'VIP 10+'
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  BETWEEN 5  AND  9 THEN 'VIP 5 a 9 referidos'
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  BETWEEN 2  AND  4 THEN '2 a 4 referidos'
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  = 1 THEN '1 referido'
+				 ELSE 'Referidos 0'
+			 END AS "VIP STATUS phone",
+		 
+			CASE
+				 WHEN d2."Stage"  = 'Cancelled' THEN 1
+				 ELSE 0
+			 END AS cantidad_cancelados,
+		 
+			CASE
+				 WHEN d2."Id"  IS NOT NULL THEN 1
+				 ELSE 0
+			 END AS referido
+FROM  "Deals" d2
+JOIN "Deals" dl ON dl.Id  = d2."Customer Referral Source Deal" 
+LEFT JOIN cantidad_referidos cr ON cr.referidor_id  = dl.Id 
+LEFT JOIN referidos_por_phone rp ON rp.phone_referidor  = dl."Main Phone_1" 
+LEFT JOIN "OQ40 - Emails_dominante" oq ON oq.phone_referidor  = dl."Main Phone_1" /* Geolocal (del referido)*/
+ 
+LEFT JOIN "Sales Team" ST2 ON ST2."Id"  = d2."Sales Rep"  
+WHERE	 d2."Customer Referral Source Deal"  IS NOT NULL
+ AND	d2."Pipeline"  NOT LIKE '%Commercial%' /* Opcional: filtrar solo referidos en etapas abiertas, por ejemplo:*/
+/* AND d2."Stage" NOT IN ('Closed Won','Closed Lost')*/
+
+ORDER BY d2."Closing Date" DESC,
+	 d2.Id 
+ UNION ALL
+ WITH cantidad_referidos AS (SELECT
+		 COALESCE(COUNT(*), 0) AS cantidad_referidos,
+		 "Customer Referral Source Deal" AS referidor_id
+FROM  "Deals" 
+GROUP BY  "Customer Referral Source Deal") ,
+referidos_por_phone AS (SELECT
+		 dl."Main Phone_1" AS phone_referidor,
+		 COUNT(DISTINCT d2.Id) AS total_referidos_phone
+FROM  "Deals" dl
+JOIN "Deals" d2 ON dl.Id  = d2."Customer Referral Source Deal"  
+WHERE	 dl."Main Phone_1"  IS NOT NULL
+GROUP BY  dl."Main Phone_1")
+SELECT
+		 CONCAT('https://crm.zoho.com/crm/org699641359/tab/Potentials/', d2.Id) AS link_referido,
+		 d2.Id AS id_referido,
+		 d2."Deal Name" AS deal_referido,
+		 d2."Stage" AS stage_referido,
+		 d2."Pipeline" AS pipeline_referido,
+		 d2."Amount" AS amount_referido,
+		 d2."Closing Date" AS closing_date_referido,
+		 d2."Distrito" AS distrito_referido,
+		 d2."City" AS city_referido,
+		 /* Sales Team del referido*/ ST2."Sales Team Name" AS sales_team_referido,
+		 ST2."Seller Inactive" AS seller_inactive_referido,
+		 /* Referidor (deal padre)*/ dl.Id AS id_referidor,
+		 CONCAT('https://crm.zoho.com/crm/org699641359/tab/Potentials/', dl.Id) AS link_referidor,
+		 dl."Deal Name" AS deal_referidor,
+		 dl."Preferred Name" AS referidor_name,
+		 dl."Main Phone_1" AS phone_referidor,
+		 COALESCE(oq.referidor_email, dl."Customer Email") AS referidor_email,
+		 /* KPIs del referidor*/ COALESCE(cr.cantidad_referidos, 0) AS cantidad_referidos,
+		 COALESCE(rp.total_referidos_phone, 0) AS total_referidos_por_phone,
+		 
+			CASE
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  > 9 THEN 'VIP 10+'
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  BETWEEN 5  AND  9 THEN 'VIP 5 a 9 referidos'
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  BETWEEN 2  AND  4 THEN '2 a 4 referidos'
+				 WHEN COALESCE(cr.cantidad_referidos, 0)  = 1 THEN '1 referido'
+				 ELSE 'Referidos 0'
+			 END AS "VIP STATUS",
+		 
+			CASE
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  > 9 THEN 'VIP 10+'
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  BETWEEN 5  AND  9 THEN 'VIP 5 a 9 referidos'
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  BETWEEN 2  AND  4 THEN '2 a 4 referidos'
+				 WHEN COALESCE(rp.total_referidos_phone, 0)  = 1 THEN '1 referido'
+				 ELSE 'Referidos 0'
+			 END AS "VIP STATUS phone",
+		 
+			CASE
+				 WHEN d2."Stage"  = 'Cancelled' THEN 1
+				 ELSE 0
+			 END AS cantidad_cancelados,
+		 
+			CASE
+				 WHEN d2."Id"  IS NOT NULL THEN 1
+				 ELSE 0
+			 END AS referido
+FROM  "Deals" d2
+JOIN "Deals" dl ON dl.Id  = d2."Customer Referral Source Deal" 
+LEFT JOIN cantidad_referidos cr ON cr.referidor_id  = dl.Id 
+LEFT JOIN referidos_por_phone rp ON rp.phone_referidor  = dl."Main Phone_1" 
+LEFT JOIN "OQ40 - Emails_dominante" oq ON oq.phone_referidor  = dl."Main Phone_1" /* Geolocal (del referido)*/
+ 
+LEFT JOIN "Sales Team" ST2 ON ST2."Id"  = d2."Sales Rep"  
+WHERE	 d2."Customer Referral Source Deal"  IS NOT NULL
+ AND	d2."Pipeline"  NOT LIKE '%Commercial%' /* Opcional: filtrar solo referidos en etapas abiertas, por ejemplo:*/
+/* AND d2."Stage" NOT IN ('Closed Won','Closed Lost')*/
+
+ORDER BY d2."Closing Date" DESC,
+	 d2.Id 
