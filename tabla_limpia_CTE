@@ -1,0 +1,30 @@
+WITH phone_clean AS (SELECT
+		 Id,
+		 "PPS Sales Name",
+		 "Customer Phone" AS "phone",
+		 CONCAT('1', right_string(REPLACE(REPLACE(REPLACE(REPLACE(replace("Customer Phone", '(', ''), ')', ''), '+', ''), ' ', ''), '-', ''), 10)) AS "Botmaker_phone",
+		 right_string(REPLACE(REPLACE(REPLACE(REPLACE(replace("Customer Phone", '(', ''), ')', ''), '+', ''), ' ', ''), '-', ''), 10) AS "phone_clean",
+		 "Customer Email",
+		 "Customer Name" AS "preferred name",
+		 "PPS Stage" AS "stage",
+		 "Sales Rep",
+		 "Closing Date",
+		 COALESCE("PPS Main Product", "PPS Expansion") AS "pipeline"
+FROM  "PPS Sales" 
+WHERE	 "Customer Phone"  IS NOT NULL)
+SELECT
+		 Id,
+		 "PPS Sales Name",
+		 "phone",
+		 "Botmaker_phone",
+		 "phone_clean",
+		 "Customer Email",
+		 "preferred name",
+		 "stage",
+		 "Sales Rep",
+		 "Closing Date",
+		 "pipeline",
+		 COUNT(*) OVER(PARTITION BY "phone_clean"  ) AS total_deals,
+		 ROW_NUMBER() OVER(PARTITION BY "phone_clean"  ORDER BY "Closing Date" DESC ) AS rn
+FROM  phone_clean 
+ 
