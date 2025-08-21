@@ -1,0 +1,8 @@
+-- Esto ayuda  a eviat la división por cero:
+
+IF(
+  SUM("OQ58-Base referidos pipelines"."referido") = 0,
+  NULL,
+  1.0 * SUM("OQ58-Base referidos pipelines"."cantidad_cancelados")
+      / SUM("OQ58-Base referidos pipelines"."referido")
+)
