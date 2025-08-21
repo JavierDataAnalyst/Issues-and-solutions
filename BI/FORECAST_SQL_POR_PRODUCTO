@@ -1,0 +1,294 @@
+WITH params AS (SELECT
+		 CURDATE() AS hoy,
+		 YEAR(CURDATE()) AS y0,
+		 YEAR(CURDATE()) -1 AS y1,
+		 YEAR(CURDATE()) -2 AS y2,
+		 YEAR(CURDATE()) -3 AS y3,
+		 YEAR(CURDATE()) -4 AS y4,
+		 YEAR(CURDATE()) -5 AS y5,
+		 MONTH(CURDATE()) AS m0,
+		 DAY(CURDATE()) AS d0,
+		 DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) -1) DAY) AS fdm0,
+		 DATE_ADD(DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) -1) DAY), INTERVAL 1 MONTH) AS fdm1,
+		 DATE_ADD(DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) -1) DAY), INTERVAL 2 MONTH) AS fdm2,
+		 DATE_ADD(DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) -1) DAY), INTERVAL 3 MONTH) AS fdm3,
+		 DATE_ADD(DATE_SUB(CURDATE(), INTERVAL (DAY(CURDATE()) -1) DAY), INTERVAL 4 MONTH) AS fdm4,
+		 248 AS lag_days) ,
+meses AS (SELECT
+		 1 AS mes_num,
+		 'January' AS mes_name
+UNION ALL
+ SELECT
+		 2,
+		 'February'
+UNION ALL
+ SELECT
+		 3,
+		 'March'
+UNION ALL
+ SELECT
+		 4,
+		 'April'
+UNION ALL
+ SELECT
+		 5,
+		 'May'
+UNION ALL
+ SELECT
+		 6,
+		 'June'
+UNION ALL
+ SELECT
+		 7,
+		 'July'
+UNION ALL
+ SELECT
+		 8,
+		 'August'
+UNION ALL
+ SELECT
+		 9,
+		 'September'
+UNION ALL
+ SELECT
+		 10,
+		 'October'
+UNION ALL
+ SELECT
+		 11,
+		 'November'
+UNION ALL
+ SELECT
+		 12,
+		 'December') ,
+b2_clean AS (SELECT
+		 t."id_referido",
+		 MAX(t."closing_date_referido") AS "closing_date_referido",
+		 MAX(t."pipeline_referido") AS "pipeline_referido",
+		 COALESCE(MAX(t."amount_referido"), 0) AS "amount_referido",
+		 MAX(t."referido") AS "referido"
+FROM  "OQ58-Base referidos pipelines" t 
+GROUP BY  t."id_referido")
+SELECT
+		 m.mes_num AS "Mes #",
+		 m.mes_name AS "Mes",
+		 COALESCE(t."pipeline_referido", '(Sin pipeline)') AS "Pipeline referido",
+		 /* Histórico (conteo) */ COALESCE(SUM(CASE
+				 WHEN YEAR(t."closing_date_referido")  = p.y0
+				 AND	MONTH(t."closing_date_referido")  = m.mes_num
+				 AND	(MONTH(t."closing_date_referido")  < p.m0
+				 OR	(MONTH(t."closing_date_referido")  = p.m0
+				 AND	DAY(t."closing_date_referido")  <= p.d0)) THEN t."referido"
+				 ELSE 0
+			 END), 0) AS "Y0",
+		 COALESCE(SUM(CASE
+				 WHEN YEAR(t."closing_date_referido")  = p.y1
+				 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+				 ELSE 0
+			 END), 0) AS "Y-1",
+		 COALESCE(SUM(CASE
+				 WHEN YEAR(t."closing_date_referido")  = p.y2
+				 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+				 ELSE 0
+			 END), 0) AS "Y-2",
+		 COALESCE(SUM(CASE
+				 WHEN YEAR(t."closing_date_referido")  = p.y3
+				 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+				 ELSE 0
+			 END), 0) AS "Y-3",
+		 COALESCE(SUM(CASE
+				 WHEN YEAR(t."closing_date_referido")  = p.y4
+				 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+				 ELSE 0
+			 END), 0) AS "Y-4",
+		 COALESCE(SUM(CASE
+				 WHEN YEAR(t."closing_date_referido")  = p.y5
+				 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+				 ELSE 0
+			 END), 0) AS "Y-5",
+		 
+			/* Proyecciones (conteo) */
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm0) THEN FLOOR(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm0, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm0 THEN t."referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm0)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm0) - 1  , YEAR(p.fdm0) - 2  ) THEN t."referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0)
+				 ELSE NULL
+			 END AS "Proyección M+0",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm1) THEN FLOOR(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm1, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm1 THEN t."referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm1)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm1) - 1  , YEAR(p.fdm1) - 2  ) THEN t."referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0)
+				 ELSE NULL
+			 END AS "Proyección M+1",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm2) THEN FLOOR(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm2, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm2 THEN t."referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm2)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm2) - 1  , YEAR(p.fdm2) - 2  ) THEN t."referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0)
+				 ELSE NULL
+			 END AS "Proyección M+2",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm3) THEN FLOOR(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm3, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm3 THEN t."referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm3)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm3) - 1  , YEAR(p.fdm3) - 2  ) THEN t."referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0)
+				 ELSE NULL
+			 END AS "Proyección M+3",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm4) THEN FLOOR(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm4, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm4 THEN t."referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm4)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm4) - 1  , YEAR(p.fdm4) - 2  ) THEN t."referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0)
+				 ELSE NULL
+			 END AS "Proyección M+4",
+		 /* Ingresos históricos y proyectados */ COALESCE(SUM(CASE
+				 WHEN YEAR(t."closing_date_referido")  = p.y0
+				 AND	MONTH(t."closing_date_referido")  = m.mes_num
+				 AND	(MONTH(t."closing_date_referido")  < p.m0
+				 OR	(MONTH(t."closing_date_referido")  = p.m0
+				 AND	DAY(t."closing_date_referido")  <= p.d0)) THEN t."amount_referido"
+				 ELSE 0
+			 END), 0) AS "Ingresos",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm0) THEN ROUND(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm0, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm0 THEN t."amount_referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm0)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm0) - 1  , YEAR(p.fdm0) - 2  ) THEN t."amount_referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0, 2)
+				 ELSE NULL
+			 END AS "Ingresos Proy M+0",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm1) THEN ROUND(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm1, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm1 THEN t."amount_referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm1)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm1) - 1  , YEAR(p.fdm1) - 2  ) THEN t."amount_referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0, 2)
+				 ELSE NULL
+			 END AS "Ingresos Proy M+1",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm2) THEN ROUND(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm2, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm2 THEN t."amount_referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm2)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm2) - 1  , YEAR(p.fdm2) - 2  ) THEN t."amount_referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0, 2)
+				 ELSE NULL
+			 END AS "Ingresos Proy M+2",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm3) THEN ROUND(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm3, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm3 THEN t."amount_referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm3)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm3) - 1  , YEAR(p.fdm3) - 2  ) THEN t."amount_referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0, 2)
+				 ELSE NULL
+			 END AS "Ingresos Proy M+3",
+		 
+			CASE
+				 WHEN m.mes_num  = MONTH(p.fdm4) THEN ROUND(((SUM(CASE
+						 WHEN DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  >= DATE_SUB(p.fdm4, INTERVAL 3 MONTH)
+						 AND	DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY)  < p.fdm4 THEN t."amount_referido"
+						 ELSE 0
+					 END) / 3.0) + (SUM(CASE
+						 WHEN MONTH(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  = MONTH(p.fdm4)
+						 AND	YEAR(DATE_ADD(t."closing_date_referido", INTERVAL (p.lag_days) DAY))  IN ( YEAR(p.fdm4) - 1  , YEAR(p.fdm4) - 2  ) THEN t."amount_referido"
+						 ELSE 0
+					 END) / 2.0)) / 2.0, 2)
+				 ELSE NULL
+			 END AS "Ingresos Proy M+4",
+		 
+			/* YoY */
+			CASE
+				 WHEN COALESCE(SUM(CASE
+						 WHEN YEAR(t."closing_date_referido")  = p.y1
+						 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+						 ELSE 0
+					 END), 0)  = 0 THEN NULL
+				 ELSE ROUND((COALESCE(SUM(CASE
+						 WHEN YEAR(t."closing_date_referido")  = p.y0
+						 AND	MONTH(t."closing_date_referido")  = m.mes_num
+						 AND	(MONTH(t."closing_date_referido")  < p.m0
+						 OR	(MONTH(t."closing_date_referido")  = p.m0
+						 AND	DAY(t."closing_date_referido")  <= p.d0)) THEN t."referido"
+						 ELSE 0
+					 END), 0) -COALESCE(SUM(CASE
+						 WHEN YEAR(t."closing_date_referido")  = p.y1
+						 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+						 ELSE 0
+					 END), 0)) * 100.0 / NULLIF(COALESCE(SUM(CASE
+						 WHEN YEAR(t."closing_date_referido")  = p.y1
+						 AND	MONTH(t."closing_date_referido")  = m.mes_num THEN t."referido"
+						 ELSE 0
+					 END), 0), 0), 2)
+			 END AS "YoY % (Y0 vs Y-1)"
+FROM  meses m
+CROSS JOIN params p
+LEFT JOIN b2_clean t ON 1  = 1  
+GROUP BY m.mes_num,
+	 m.mes_name,
+	 COALESCE(t."pipeline_referido", '(Sin pipeline)'),
+	 p.y0,
+	 p.y1,
+	 p.y2,
+	 p.y3,
+	 p.y4,
+	 p.y5,
+	 p.m0,
+	 p.d0,
+	 p.fdm0,
+	 p.fdm1,
+	 p.fdm2,
+	 p.fdm3,
+	  p.fdm4 
+ORDER BY "Mes #",
+	 "Pipeline referido" 
+ 
