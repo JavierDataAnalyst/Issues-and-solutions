@@ -1,0 +1,17 @@
+--El diagrama de Pareto es una herramienta visual efectiva para identificar los factores más influyentes en un conjunto de datos. La regla del 80/20, que sugiere que el 80% de los resultados proviene del 20% de las causas, se aplica aquí.
+
+1. Calcular el valor total por modelo:
+
+Creamos una medida "TotalDeventaModelo" utilizando CALCULATE.
+TotalDeventaModelo = CALCULATE(SUM('DIN Vehículo'[TotalVenta]), ALL('DIN Vehículo'[Modelo]))
+
+
+2. Calcular el porcentaje de Pareto:
+
+Creamos una medida para calcular la participación de cada modelo en las ventas totales.
+porcentaje Pareto = DIVIDE([ValorModelo], [TotalDeventaModelo])
+Visualización:
+
+--Usamos un gráfico de columnas agrupadas y de línea para representar los modelos frente a las ventas.
+El porcentaje de Pareto se lleva al eje Y de línea.
+Este proceso nos permite identificar rápidamente qué modelos contribuyen más significativamente a las ventas, facilitando la toma de decisiones estratégicas.
