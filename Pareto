@@ -6,12 +6,13 @@ Creamos una medida "TotalDeventaModelo" utilizando CALCULATE.
 TotalDeventaModelo = CALCULATE(SUM('DIN Vehículo'[TotalVenta]), ALL('DIN Vehículo'[Modelo]))
 
 
-2. Calcular el porcentaje de Pareto:
+2. Calcular el porcentaje de Pareto (PARTICIPACIÓN):
 
 Creamos una medida para calcular la participación de cada modelo en las ventas totales.
 porcentaje Pareto = DIVIDE([ValorModelo], [TotalDeventaModelo])
 Visualización:
 
 --Usamos un gráfico de columnas agrupadas y de línea para representar los modelos frente a las ventas.
-El porcentaje de Pareto se lleva al eje Y de línea.
+El porcentaje de Pareto se lleva al eje Y de línea. ETIQTEAS DE DATOS: Pocentaje de pareto (CHULO O CHECK)
 Este proceso nos permite identificar rápidamente qué modelos contribuyen más significativamente a las ventas, facilitando la toma de decisiones estratégicas.
+Lo que nos interesa es el 20%
