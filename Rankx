@@ -1,0 +1,3 @@
+La función RankX en Power BI te permite generar un ranking de valores dentro de un conjunto de datos. 
+Ranking Modelo = 
+RANKX(ALL(dim_vehiculo[modelo_vehiculo]),[Total de ventas])
