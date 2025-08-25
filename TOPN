@@ -1,0 +1,2 @@
+--la función TOP N se utiliza para extraer los elementos más destacados de una lista en base a un criterio específico.
+ValorModelo = SUMX(TOPN([Ranking Modelo],ALL(dim_vehiculo[modelo_vehiculo]),[Total de ventas]),[Total de ventas])
