@@ -1,1 +1,6 @@
+--Evaluación contextos
+-- Calculate genera una tabla iterada 
+
 Total Venta Honda = CALCULATE([Total de ventas],dim_vehiculo[marca_vehiculo] = "HONDA")
+
+
