@@ -5,3 +5,7 @@
 -- Mes = MONTH ( Calendario[Date] )
 -- NombreMes = FORMAT ( Calendario[Date], "mmmm" )
 -- DíaSemana = FORMAT ( Calendario[Date], "dddd" )
+
+
+Venta del Mes anterior 
+= CALCULATE([Total de ventas], PREVIOUSMONTH(Dim_Calendario[Fecha]))
