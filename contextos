@@ -3,4 +3,13 @@
 
 Total Venta Honda = CALCULATE([Total de ventas],dim_vehiculo[marca_vehiculo] = "HONDA")
 
+Generar tabla con columna vendedor y el total de venta mínimo on 30M: 
 
+vENTAvENDEDOR>30000000 = CALCULATE([Total de ventas],filter(Dim_Vendedor,[Total de ventas]>30000000))
+
+Calcula una tabla que contenga la marca de vehículo, cuyo total de venta sea mayor a 50M:
+
+La medida devuelve el total de ventas por cada marca de vehículo, ignorando cualquier otro filtro que no sea la marca -- 
+
+Total de venta marca 1 = CALCULATE(SUM(Fact_Ventas[Precio Venta sin IGV]),ALLEXCEPT(Fact_Ventas,dim_vehiculo[marca_vehiculo]))
+Total de venta marca 1 = CALCULATE(SUM(Fact_Ventas[Precio Venta sin IGV]),ALLEXCEPT(Fact_Ventas,dim_vehiculo[marca_vehiculo]))
