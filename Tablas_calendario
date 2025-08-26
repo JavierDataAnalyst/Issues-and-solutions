@@ -1,0 +1,7 @@
+1. Herramientas: nuevas tabla
+-- Calendario =  CALENDAR ( DATE (2016, 1, 1), DATE (2030, 12, 31) )
+--CalendarAuto()
+-- Año = YEAR ( Calendario[Date] )
+-- Mes = MONTH ( Calendario[Date] )
+-- NombreMes = FORMAT ( Calendario[Date], "mmmm" )
+-- DíaSemana = FORMAT ( Calendario[Date], "dddd" )
