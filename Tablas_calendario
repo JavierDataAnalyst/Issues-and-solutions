@@ -9,3 +9,19 @@
 
 Venta del Mes anterior 
 = CALCULATE([Total de ventas], PREVIOUSMONTH(Dim_Calendario[Fecha]))
+
+Venta del trimestre del año pasado 
+= CALCULATE([Total de ventas],PARALLELPERIOD(Dim_Calendario[Fecha],-4,quarter))
+
+Comparar las ventas del año pasado para ver si he crecido: 
+
+objetivo LY 
+= CALCULATE([Total de ventas],DATEADD(Dim_Calendario[Fecha],-12,MONTH))
+
+---Venta Acumulada de 2 ños anteriores
+2y = CALCULATE([Ventas -2y],FILTER(ALLSELECTED(Dim_Calendario),Dim_Calendario[Fecha] >= MAX(Dim_Calendario[Fecha])))
+
+--Venta 2 años anteriores: 
+Ventas -2y = CALCULATE([Total de ventas],DATEADD(Dim_Calendario[Fecha],-2,year))
+
+-- AGRUPACIONES DE TIEMPO INTELIGENTE
