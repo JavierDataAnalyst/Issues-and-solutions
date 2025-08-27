@@ -1,0 +1,3 @@
+-- Indicadores de gestión comercial
+
+YoY = VAR ventasLY = CALCULATE([Total de ventas], DATEADD(Dim_Calendario[Fecha],-1,YEAR)) RETURN divide([Total de ventas] - ventasLY,ventasLY,0)
