@@ -1,0 +1,42 @@
+SELECT
+		 d.id AS id,
+		 d."Deal Name" as "Name",
+		 d."Closing Date" as "Date",
+		 NULL AS "Lead status",
+		 d."Contact Phone Number" AS "Telefono Cliente",
+		 d."Customer Email" AS "Correo Cliente",
+		 st."Sales Team Name" AS Vendedor,
+		 st."Status" AS "Estado Vendedor",
+		 st."Upline Level 1" AS "Upline level 1 vendedor",
+		 st."Upline Level 2" AS "Upline level 2 vendedor",
+		 st."Upline Level 3" AS "Upline level 3 vendedor",
+		 st."Upline Level 4" AS "Upline level 4 vendedor",
+		 s2."Sales Team Name" AS "Nombre reclutador",
+		 s2."Phone" AS "Phone reclutador",
+		 s2."Status" AS "Status del Reclutador / Mentor",
+		 q."Vendedor" as "Vendedor Alterno",
+		 q."Estado Vendedor" as "Estado Vendedor Alterno",
+		 d."Pipeline" as "Pipeline",
+		 d."Stage" AS "Etapa Deal"
+FROM (	SELECT
+			 d1.Id as id,
+			 d1."Deal Name" as "Deal Name",
+			 d1."Closing Date" as "Closing Date",
+			 d1."Contact Phone Number" as "Contact Phone Number",
+			 d1."Customer Email" as "Customer Email",
+			 d1."Pipeline" as "Pipeline",
+			 d1."Stage" as "Stage",
+			 d1."Sales Rep" as "Sales Rep",
+			 ROW_NUMBER() OVER(PARTITION BY d1."Contact Phone Number"  ORDER BY d1."Closing Date" DESC ) AS rn,
+			 COUNT(*) OVER(PARTITION BY d1."Contact Phone Number"  ) AS cnt
+	FROM  Deals d1
+LEFT JOIN "Sales Team" s ON s.Id  = d1."Sales Rep"  
+	WHERE	 d1."Pipeline"  NOT LIKE '%Commercial%'
+	 AND	s."Status"  IN ( 'Renuncio'  , 'Competencia'  , 'Inactivo'  )
+) d
+LEFT JOIN "Sales Team" st ON st.Id  = d."Sales Rep" 
+LEFT JOIN "Sales Team" s2 ON s2.Id  = st."Recruited By" 
+LEFT JOIN "Q05.1 - Subconsulta Deal con Vendedor Activo" q ON q."Telefono Cliente"  = d.d."Contact Phone Number"  
+WHERE	 d.rn  = 1 /* This is a sample SQL SELECT Query */
+/*Use "Control + Space Bar" to see other keywords*/
+
