@@ -1,0 +1,17 @@
+CASE
+  /* Si hay 3+ palabras (>=2 espacios): devuelve el penúltimo token */
+  WHEN (length(trim(d."Preferred Name")) - length(replace(trim(d."Preferred Name"), ' ', ''))) >= 2
+    THEN initcap(
+           reverse(
+             substring_before(
+               substring_after(reverse(d."Preferred Name"), ' '),
+             ' ')
+           )
+         )
+  /* Si hay solo 2 palabras: devuelve la última (apellido) */
+  ELSE initcap(
+         reverse(
+           substring_before(reverse(d."Preferred Name"), ' ')
+         )
+       )
+END  AS "Last name"
