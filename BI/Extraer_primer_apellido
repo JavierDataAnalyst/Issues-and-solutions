@@ -1,7 +1,10 @@
 CASE
 					WHEN (length(trim(d."Preferred Name")) -length(replace(trim(d."Preferred Name"), ' ', '')))  >= 2 THEN 
 						CASE
-							 WHEN lower(REVERSE(substring_before(substring_after(REVERSE(trim(d."Preferred Name")), ' '), ' ')))  IN ( 'de'  , 'del'  , 'da'  , 'do'  , 'dos'  , 'das'  , 'van'  , 'von'  , 'la'  , 'las'  , 'los'  , 'y'  ) /* Si el penúltimo es partícula → toma el ÚLTIMO token */ THEN initcap(REVERSE(substring_before(REVERSE(trim(d."Preferred Name")), ' '))) /* Si no es partícula → toma el PENÚLTIMO token (primer apellido) */
+							 WHEN lower(REVERSE(substring_before(substring_after(REVERSE(trim(d."Preferred Name")), ' '), ' '))) 
+IN ( 'de'  , 'del'  , 'da'  , 'do'  , 'dos'  , 'das'  , 'van'  , 'von'  , 'la'  , 'las'  , 'los'  , 'y'  ) 
+
+THEN initcap(REVERSE(substring_before(REVERSE(trim(d."Preferred Name")), ' '))) 
 							 ELSE initcap(REVERSE(substring_before(substring_after(REVERSE(trim(d."Preferred Name")), ' '), ' ')))
 						 END
 					 ELSE initcap(REVERSE(substring_before(REVERSE(trim(d."Preferred Name")), ' ')))
