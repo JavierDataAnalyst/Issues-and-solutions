@@ -8,3 +8,14 @@
 						 END
 					 ELSE initcap(REVERSE(substring_before(REVERSE(trim(d."Preferred Name")), ' ')))
 				 END AS "Last name",
+ IF(NULLIF(TRIM(IFNULL(ce.middle_name, '')), '')  IS NOT NULL, CONCAT(/* first_name */ UPPER(LEFT(TRIM(SUBSTRING_INDEX(IFNULL(ce.first_name, ''), ' ', 1)), 1)), LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(IFNULL(ce.first_name, ''),
+' ', 1)), 2)), IF(LOCATE(' ', TRIM(IFNULL(ce.first_name, '')))  > 0, CONCAT(' ', UPPER(LEFT(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.first_name, '')), ' ', -1)), 1)),
+/* FIXED*/ LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.first_name, '')), ' ', -1)), 2)) /* FIXED*/), ''), ' ', /* middle_name */ UPPER(LEFT(TRIM(SUBSTRING_INDEX(IFNULL(ce.middle_name, ''), ' ', 1)), 1)), 
+IF(CHAR_LENGTH(TRIM(SUBSTRING_INDEX(IFNULL(ce.middle_name, ''), ' ', 1)))  > 1, LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(IFNULL(ce.middle_name, ''), ' ', 1)), 2)), ''), IF(LOCATE(' ', TRIM(IFNULL(ce.middle_name, '')))  > 0, 
+CONCAT(' ', UPPER(LEFT(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.middle_name, '')), ' ', -1)), 1)), /* FIXED*/ LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.middle_name, '')), ' ', -1)), 2)) /* FIXED*/), ''), ' '
+, /* last_name */ UPPER(LEFT(TRIM(SUBSTRING_INDEX(IFNULL(ce.last_name, ''), ' ', 1)), 1)), LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(IFNULL(ce.last_name, ''), ' ', 1)), 2)), IF(LOCATE(' ', TRIM(IFNULL(ce.last_name, '')))  > 0
+, CONCAT(' ', UPPER(LEFT(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.last_name, '')), ' ', -1)), 1)), /* FIXED*/ LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.last_name, '')), ' ', -1)), 2)) /* FIXED*/), '')), 
+CONCAT(/* first_name */ UPPER(LEFT(TRIM(SUBSTRING_INDEX(IFNULL(ce.first_name, ''), ' ', 1)), 1)), LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(IFNULL(ce.first_name, ''), ' ', 1)), 2)), IF(LOCATE(' ', TRIM(IFNULL(ce.first_name, '')))  
+> 0, CONCAT(' ', UPPER(LEFT(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.first_name, '')), ' ', -1)), 1)), /* FIXED*/ LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.first_name, '')), ' ', -1)), 2)) /* FIXED*/), ''), ' ',
+/* last_name */ UPPER(LEFT(TRIM(SUBSTRING_INDEX(IFNULL(ce.last_name, ''), ' ', 1)), 1)), LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(IFNULL(ce.last_name, ''), ' ', 1)), 2)), IF(LOCATE(' ', TRIM(IFNULL(ce.last_name, '')))  > 0, 
+CONCAT(' ', UPPER(LEFT(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.last_name, '')), ' ', -1)), 1)), /* FIXED*/ LOWER(SUBSTRING(TRIM(SUBSTRING_INDEX(TRIM(IFNULL(ce.last_name, '')), ' ', -1)), 2)) /* FIXED*/), ''))) AS customer_name
