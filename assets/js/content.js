@@ -18,7 +18,7 @@ const UI = {
     location: "Bogotá, Colombia · remoto",
     tagline: "Convierto datos de crédito en cifras confiables y en decisiones. SQL, Python, Power BI y Excel, con IA y controles que pueden fallar.",
     bio: "Analista de BI con experiencia en crédito de consumo y marketing. En crédito construyo la fuente única de verdad del portafolio, las métricas de riesgo (roll rates, mora por tramos, cosechas, UPB) y la reportería de covenants para financiadores. En marketing concilié más de 500,000 registros de varias fuentes en una base de contacto único y segmenté clientes por características (referidos, tamaño del sistema, valor de vida, etapa del embudo) para campañas multicanal. Perfil híbrido de negocio e ingeniería, con SQL avanzado, Python y comunicación ejecutiva en español e inglés.",
-    almaText: "Ingeniero de Producción · 2020 – 2023",
+    almaText: "Ingeniero de Producción",
     privacy: "Proyectos descritos sin nombres de clientes, bancos ni montos. Todas las demos usan datos ficticios.",
     stats: [
       ["+30", "dashboards en producción", "finanzas, operaciones, ventas y marketing"],
@@ -56,7 +56,7 @@ const UI = {
     location: "Bogotá, Colombia · remote",
     tagline: "I turn lending data into reliable numbers and decisions. SQL, Python, Power BI and Excel, with AI and controls that can actually fail.",
     bio: "BI analyst with experience in consumer credit and marketing. In credit, I build the portfolio's single source of truth, the risk metrics (roll rates, delinquency buckets, vintages, UPB) and covenant reporting for funders. In marketing, I reconciled more than 500,000 records from several sources into a single-contact customer base and segmented customers by attributes (referrals, system size, lifetime value, funnel stage) for multichannel campaigns. A hybrid business and engineering profile, with advanced SQL, Python and executive communication in Spanish and English.",
-    almaText: "B.Sc. Production Engineering · 2020 – 2023",
+    almaText: "B.Sc. Production Engineering",
     privacy: "Projects are described without client names, banks or amounts. Every demo uses fictional data.",
     stats: [
       ["30+", "dashboards in production", "finance, operations, sales and marketing"],

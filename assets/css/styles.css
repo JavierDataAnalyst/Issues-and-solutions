@@ -79,10 +79,10 @@ section { scroll-margin-top: 120px; }
 .contact { display: flex; flex-wrap: wrap; gap: 8px; }
 /* universidad: discreta, debajo de los contactos */
 .alma { display: flex; align-items: center; gap: 14px; margin-top: 22px; padding-top: 16px; border-top: 1px solid rgba(255, 255, 255, .08); max-width: 560px; }
-.alma img { height: 46px; width: auto; opacity: .9; }
+.alma img { height: 56px; width: auto; background: #fcfcfc; border-radius: 8px; padding: 6px 12px; box-shadow: 0 8px 24px -12px rgba(0, 0, 0, .7); }
 .alma span { color: var(--muted); font-size: .84rem; padding-left: 14px; border-left: 1px solid rgba(255, 255, 255, .14); }
 
-/* texto cifrado animado (canvas) a la derecha, desvanecido hacia el texto de la portada */
+/* modelo estrella y texto cifrado animados (canvas) a la derecha, desvanecidos hacia el texto de la portada */
 .hero-art {
   position: absolute; top: 0; right: 0; bottom: 0; width: 56%; z-index: 1; overflow: hidden;
   transform: perspective(1000px) rotateY(-10deg); transform-origin: right center;
@@ -201,7 +201,7 @@ table.heat { border-collapse: collapse; width: 100%; min-width: 560px; font-size
 @media (max-width: 560px) {
   .brand-text small { display: none; }
   .hero-copy { padding: 28px 20px; }
-  .alma img { height: 30px; }
+  .alma img { height: 46px; padding: 5px 9px; }
   .alma span { font-size: .78rem; }
   .skills, .edu { grid-template-columns: 1fr; }
   .stat b { font-size: 1.5rem; }

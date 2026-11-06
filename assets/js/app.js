@@ -26,9 +26,22 @@
   const tramo = (x) => (lang === "en" && TRAMO_EN[x]) || (x === "Pagado" ? t("paid") : x);
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
-  // ------------------------------------------------------------ portada: texto cifrado con palabras clave
-  // Un campo de caracteres que cambian (como datos cifrados) sobre una cuadrícula azul; las palabras de
-  // KEYWORDS se "descifran", se quedan unos segundos y se desvanecen, intercalándose.
+  // ------------------------------------------------------------ portada: modelo estrella + texto cifrado
+  // Un modelo estrella (tabla de hechos al centro y dimensiones alrededor) con datos que fluyen hacia los hechos,
+  // sobre un campo de caracteres que cambian (como datos cifrados). Las palabras de KEYWORDS se "descifran",
+  // se quedan unos segundos y se desvanecen, intercalándose.
+  const SCHEMA = {
+    fact: { name: "fact_prestamos", cols: ["prestamo_id   PK", "cliente_id    FK", "fecha_id      FK", "producto_id   FK", "monto · saldo · dpd"] },
+    dims: [
+      { name: "dim_cliente", cols: ["score · ciudad"], x: 0.31, y: 0.17 },
+      { name: "dim_fecha", cols: ["mes · cosecha"], x: 0.58, y: 0.10 },
+      { name: "dim_producto", cols: ["tipo · plazo"], x: 0.85, y: 0.17 },
+      { name: "dim_canal", cols: ["web · app"], x: 0.85, y: 0.83 },
+      { name: "dim_tramo_mora", cols: ["1-30 · 31-60"], x: 0.58, y: 0.90 },
+      { name: "dim_portafolio", cols: ["nombre · tier"], x: 0.31, y: 0.83 },
+    ],
+  };
+
   function initMatrix() {
     const box = $("#hero-art");
     box.innerHTML = '<canvas aria-hidden="true"></canvas>';
@@ -40,13 +53,16 @@
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     const rnd = (n) => Math.floor(Math.random() * n);
     const ch = () => CHARS[rnd(CHARS.length)];
+    const cen = (b) => [b.x + b.w / 2, b.y + b.h / 2];
     let W = 0, H = 0, cols = 0, rows = 0, grid = [], words = [], visible = true, last = 0;
+    let fact = null, dims = [], boxes = [], masked = new Uint8Array(0);
 
     function addWord(now, age = 0) {
       const list = KEYWORDS[lang];
       const text = list[rnd(list.length)];
       if (text.length + 2 > cols) return;
       const row = rnd(rows), col = rnd(cols - text.length);
+      for (let i = 0; i < text.length; i++) if (masked[row * cols + col + i]) return; // no encima de las tablas
       const choca = words.some((w) => Math.abs(w.row - row) < 1 && col < w.col + w.text.length + 2 && w.col < col + text.length + 2);
       if (choca || words.some((w) => w.text === text)) return;
       words.push({ text, row, col, born: now - age, life: 5200 + rnd(3800), tone: Math.random() < 0.55 ? "143, 180, 255" : "222, 228, 238" });
@@ -59,10 +75,62 @@
       cv.style.width = `${W}px`; cv.style.height = `${H}px`;
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       cols = Math.ceil(W / CW); rows = Math.ceil(H / LH);
-      grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ({ c: ch(), a: 0.10 + Math.random() * 0.28 })));
+      grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ({ c: ch(), a: 0.10 + Math.random() * 0.26 })));
+
+      const fw = Math.min(176, W * 0.28), fh = 112;
+      const dw = Math.min(134, W * 0.22), dh = 50;
+      fact = { ...SCHEMA.fact, x: W * 0.58 - fw / 2, y: H * 0.5 - fh / 2, w: fw, h: fh };
+      dims = SCHEMA.dims.map((d) => ({ ...d, x: W * d.x - dw / 2, y: Math.min(H - dh - 4, Math.max(4, H * d.y - dh / 2)), w: dw, h: dh }));
+      boxes = [fact, ...dims];
+      // celdas tapadas por las tablas: ahí no se dibujan caracteres
+      masked = new Uint8Array(rows * cols);
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          const x = c * CW + CW / 2, y = r * LH + LH / 2 + 2;
+          if (boxes.some((b) => x > b.x - 6 && x < b.x + b.w + 6 && y > b.y - 6 && y < b.y + b.h + 6)) masked[r * cols + c] = 1;
+        }
+      }
+
       words = [];
       const now = performance.now();
-      for (let i = 0; i < 40 && words.length < Math.max(4, Math.round(rows / 2)); i++) addWord(now, 1200 + rnd(2500));
+      for (let i = 0; i < 60 && words.length < Math.max(4, Math.round(rows / 2)); i++) addWord(now, 1200 + rnd(2500));
+    }
+
+    function drawSchema(now) {
+      // relaciones uno a varios, con datos que fluyen de cada dimensión hacia los hechos
+      const [fx, fy] = cen(fact);
+      dims.forEach((d, i) => {
+        const [dx, dy] = cen(d);
+        ctx.strokeStyle = "rgba(110, 150, 230, .38)";
+        ctx.lineWidth = 1.2;
+        ctx.beginPath(); ctx.moveTo(dx, dy); ctx.lineTo(fx, fy); ctx.stroke();
+        const t = reduce ? 0.5 : (now / 2800 + i / dims.length) % 1;
+        ctx.fillStyle = "rgba(125, 200, 255, .85)";
+        ctx.beginPath(); ctx.arc(dx + (fx - dx) * t, dy + (fy - dy) * t, 2.2, 0, Math.PI * 2); ctx.fill();
+      });
+      boxes.forEach((b, k) => {
+        const esHechos = k === 0;
+        ctx.save();
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 6); else ctx.rect(b.x, b.y, b.w, b.h);
+        ctx.fillStyle = "rgba(12, 22, 48, .94)";
+        ctx.fill();
+        ctx.clip();
+        ctx.fillStyle = esHechos ? "rgba(61, 110, 230, .38)" : "rgba(61, 100, 200, .24)";
+        ctx.fillRect(b.x, b.y, b.w, 19);
+        ctx.font = `600 11px ${MONO}`;
+        ctx.fillStyle = "rgba(225, 233, 248, .95)";
+        ctx.fillText(b.name, b.x + 8, b.y + 4);
+        ctx.font = `10.5px ${MONO}`;
+        ctx.fillStyle = "rgba(160, 175, 205, .8)";
+        b.cols.forEach((c, j) => ctx.fillText(c, b.x + 8, b.y + 25 + j * 14));
+        ctx.restore();
+        ctx.strokeStyle = esHechos ? "rgba(140, 180, 255, .75)" : "rgba(120, 155, 230, .5)";
+        ctx.lineWidth = esHechos ? 1.5 : 1;
+        ctx.beginPath();
+        if (ctx.roundRect) ctx.roundRect(b.x, b.y, b.w, b.h, 6); else ctx.rect(b.x, b.y, b.w, b.h);
+        ctx.stroke();
+      });
     }
 
     function draw(now) {
@@ -70,29 +138,19 @@
       if (!visible || (now - last < 55 && !reduce)) return; // ~18 cuadros por segundo
       last = now;
       ctx.clearRect(0, 0, W, H);
+      ctx.textBaseline = "top";
+      drawSchema(now);
 
-      // cuadrícula azul de fondo
-      const T = 44, G = 6;
-      for (let y = 4; y < H; y += T + G) {
-        for (let x = 4; x < W; x += T + G) {
-          ctx.fillStyle = "rgba(38, 66, 140, .30)";
-          ctx.strokeStyle = "rgba(130, 160, 230, .16)";
-          ctx.beginPath();
-          ctx.roundRect ? ctx.roundRect(x, y, T, T, 3) : ctx.rect(x, y, T, T);
-          ctx.fill(); ctx.stroke();
-        }
-      }
-
-      // caracteres que mutan
+      // caracteres que mutan alrededor de las tablas
       if (!reduce) for (let k = 0; k < cols * rows * 0.012; k++) grid[rnd(rows)][rnd(cols)].c = ch();
       words = words.filter((w) => now - w.born < w.life);
       const ocupado = new Set();
       words.forEach((w) => { for (let i = 0; i < w.text.length; i++) ocupado.add(w.row * cols + w.col + i); });
       ctx.font = `${FS}px ${MONO}`;
-      ctx.textBaseline = "top";
       for (let r = 0; r < rows; r++) {
         for (let c = 0; c < cols; c++) {
-          if (ocupado.has(r * cols + c)) continue;
+          const idx = r * cols + c;
+          if (masked[idx] || ocupado.has(idx)) continue;
           const cell = grid[r][c];
           ctx.fillStyle = `rgba(150, 164, 190, ${cell.a})`;
           ctx.fillText(cell.c, c * CW, r * LH + 2);
