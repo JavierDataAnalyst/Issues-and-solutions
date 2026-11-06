@@ -22,8 +22,8 @@ const UI = {
     stats: [
       ["+30", "dashboards en producción", "finanzas, operaciones, ventas y marketing"],
       ["441/441", "cifras reproducidas", "por una auditoría independiente"],
-      ["72 % → 99 %", "cobertura de FICO", "en el dashboard de inversionistas"],
-      ["0", "cartas a cuentas retenidas", "desde que el filtro está activo"],
+      ["5–16 %", "ocupación del call center", "la decisión pasó de contratar más a cubrir las horas pico"],
+      ["> 100 %", "tasa de fondeo errónea detectada", "corregida antes de llegar a los inversionistas"],
     ],
     summaryKicker: "Perfil · resumen",
     summaryTitle: "Del dato crudo a la decisión, con cifras que se pueden auditar",
@@ -59,8 +59,8 @@ const UI = {
     stats: [
       ["30+", "dashboards in production", "finance, operations, sales and marketing"],
       ["441/441", "figures reproduced", "by an independent audit query"],
-      ["72% → 99%", "FICO coverage", "in the investor dashboard"],
-      ["0", "letters to held accounts", "since the filter went live"],
+      ["5–16%", "call center occupancy", "the decision shifted from hiring more to covering peak hours"],
+      ["> 100%", "flawed funding rate caught", "fixed before it reached investors"],
     ],
     summaryKicker: "Profile · summary",
     summaryTitle: "From raw data to decisions, with numbers you can audit",

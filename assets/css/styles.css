@@ -28,7 +28,7 @@ body { margin: 0; color: var(--text); background: var(--bg); font: 15.5px/1.6 "I
 a { color: var(--blue); text-decoration: none; }
 a:hover { text-decoration: underline; }
 h1, h2, h3 { line-height: 1.2; margin: 0; }
-.wrap { max-width: 1180px; margin: 0 auto; padding: 0 16px; }
+.wrap { max-width: 1400px; margin: 0 auto; padding: 0 clamp(16px, 3vw, 40px); }
 section { scroll-margin-top: 120px; }
 .center { text-align: center; }
 .kicker { color: var(--blue); font-size: .72rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; margin: 0 0 .45rem; }
