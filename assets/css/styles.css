@@ -64,6 +64,12 @@ section { scroll-margin-top: 120px; }
 .dot.blue { background: var(--blue); }
 .dot.gray { background: #9aa3b2; }
 .dot.cyan { background: var(--cyan); }
+/* colores de la bandera de Colombia: amarillo, azul y rojo */
+.flag-co { display: inline-block; width: 18px; height: 12px; border-radius: 2px; box-shadow: 0 0 0 1px rgba(255, 255, 255, .28);
+  background: linear-gradient(#fcd116 0 50%, #003893 50% 75%, #ce1126 75% 100%); }
+.dot.co-yellow { background: #fcd116; }
+.dot.co-blue { background: #003893; box-shadow: 0 0 0 1.5px rgba(150, 180, 255, .6); }
+.dot.co-red { background: #ce1126; }
 
 /* ---------------------------------------------------------- portada */
 .hero {
