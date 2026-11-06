@@ -1,0 +1,578 @@
+{
+ "corte": "2026-06-30",
+ "aprobacion": [
+  {
+   "mes": "2026-01",
+   "canal": "App",
+   "solicitudes": 227,
+   "aprobadas": 149,
+   "tasa_aprobacion": 0.6564
+  },
+  {
+   "mes": "2026-01",
+   "canal": "Web",
+   "solicitudes": 333,
+   "aprobadas": 231,
+   "tasa_aprobacion": 0.6937
+  },
+  {
+   "mes": "2026-02",
+   "canal": "App",
+   "solicitudes": 233,
+   "aprobadas": 135,
+   "tasa_aprobacion": 0.5794
+  },
+  {
+   "mes": "2026-02",
+   "canal": "Web",
+   "solicitudes": 287,
+   "aprobadas": 166,
+   "tasa_aprobacion": 0.5784
+  },
+  {
+   "mes": "2026-03",
+   "canal": "App",
+   "solicitudes": 283,
+   "aprobadas": 157,
+   "tasa_aprobacion": 0.5548
+  },
+  {
+   "mes": "2026-03",
+   "canal": "Web",
+   "solicitudes": 327,
+   "aprobadas": 206,
+   "tasa_aprobacion": 0.63
+  },
+  {
+   "mes": "2026-04",
+   "canal": "App",
+   "solicitudes": 258,
+   "aprobadas": 157,
+   "tasa_aprobacion": 0.6085
+  },
+  {
+   "mes": "2026-04",
+   "canal": "Web",
+   "solicitudes": 243,
+   "aprobadas": 143,
+   "tasa_aprobacion": 0.5885
+  },
+  {
+   "mes": "2026-04",
+   "canal": "WhatsApp",
+   "solicitudes": 219,
+   "aprobadas": 65,
+   "tasa_aprobacion": 0.2968
+  },
+  {
+   "mes": "2026-05",
+   "canal": "App",
+   "solicitudes": 305,
+   "aprobadas": 178,
+   "tasa_aprobacion": 0.5836
+  },
+  {
+   "mes": "2026-05",
+   "canal": "Web",
+   "solicitudes": 276,
+   "aprobadas": 149,
+   "tasa_aprobacion": 0.5399
+  },
+  {
+   "mes": "2026-05",
+   "canal": "WhatsApp",
+   "solicitudes": 219,
+   "aprobadas": 84,
+   "tasa_aprobacion": 0.3836
+  },
+  {
+   "mes": "2026-06",
+   "canal": "App",
+   "solicitudes": 322,
+   "aprobadas": 164,
+   "tasa_aprobacion": 0.5093
+  },
+  {
+   "mes": "2026-06",
+   "canal": "Web",
+   "solicitudes": 276,
+   "aprobadas": 154,
+   "tasa_aprobacion": 0.558
+  },
+  {
+   "mes": "2026-06",
+   "canal": "WhatsApp",
+   "solicitudes": 252,
+   "aprobadas": 77,
+   "tasa_aprobacion": 0.3056
+  }
+ ],
+ "mora": [
+  {
+   "cosecha": "2026-01",
+   "canal": "App",
+   "prestamos": 150,
+   "desembolsado": 27800000,
+   "saldo_mora_30": 3129000,
+   "mora_30": 0.1126
+  },
+  {
+   "cosecha": "2026-01",
+   "canal": "Web",
+   "prestamos": 231,
+   "desembolsado": 43600000,
+   "saldo_mora_30": 3468000,
+   "mora_30": 0.0795
+  },
+  {
+   "cosecha": "2026-02",
+   "canal": "App",
+   "prestamos": 134,
+   "desembolsado": 33050000,
+   "saldo_mora_30": 1502000,
+   "mora_30": 0.0454
+  },
+  {
+   "cosecha": "2026-02",
+   "canal": "Web",
+   "prestamos": 167,
+   "desembolsado": 39300000,
+   "saldo_mora_30": 3089000,
+   "mora_30": 0.0786
+  },
+  {
+   "cosecha": "2026-03",
+   "canal": "App",
+   "prestamos": 156,
+   "desembolsado": 46800000,
+   "saldo_mora_30": 4704000,
+   "mora_30": 0.1005
+  },
+  {
+   "cosecha": "2026-03",
+   "canal": "Web",
+   "prestamos": 206,
+   "desembolsado": 58200000,
+   "saldo_mora_30": 4179000,
+   "mora_30": 0.0718
+  },
+  {
+   "cosecha": "2026-04",
+   "canal": "App",
+   "prestamos": 158,
+   "desembolsado": 54250000,
+   "saldo_mora_30": 3934000,
+   "mora_30": 0.0725
+  },
+  {
+   "cosecha": "2026-04",
+   "canal": "Web",
+   "prestamos": 145,
+   "desembolsado": 49600000,
+   "saldo_mora_30": 3793000,
+   "mora_30": 0.0765
+  },
+  {
+   "cosecha": "2026-04",
+   "canal": "WhatsApp",
+   "prestamos": 63,
+   "desembolsado": 22750000,
+   "saldo_mora_30": 2795000,
+   "mora_30": 0.1229
+  },
+  {
+   "cosecha": "2026-05",
+   "canal": "App",
+   "prestamos": 177,
+   "desembolsado": 66050000,
+   "saldo_mora_30": 4596000,
+   "mora_30": 0.0696
+  },
+  {
+   "cosecha": "2026-05",
+   "canal": "Web",
+   "prestamos": 148,
+   "desembolsado": 51550000,
+   "saldo_mora_30": 1676000,
+   "mora_30": 0.0325
+  },
+  {
+   "cosecha": "2026-05",
+   "canal": "WhatsApp",
+   "prestamos": 86,
+   "desembolsado": 29800000,
+   "saldo_mora_30": 1200000,
+   "mora_30": 0.0403
+  },
+  {
+   "cosecha": "2026-06",
+   "canal": "App",
+   "prestamos": 166,
+   "desembolsado": 71750000,
+   "saldo_mora_30": 0,
+   "mora_30": 0.0
+  },
+  {
+   "cosecha": "2026-06",
+   "canal": "Web",
+   "prestamos": 155,
+   "desembolsado": 64050000,
+   "saldo_mora_30": 0,
+   "mora_30": 0.0
+  },
+  {
+   "cosecha": "2026-06",
+   "canal": "WhatsApp",
+   "prestamos": 77,
+   "desembolsado": 30350000,
+   "saldo_mora_30": 0,
+   "mora_30": 0.0
+  }
+ ],
+ "madurez": {
+  "2026-01": true,
+  "2026-02": true,
+  "2026-03": true,
+  "2026-04": true,
+  "2026-05": false,
+  "2026-06": false
+ },
+ "roll": [
+  {
+   "corte_desde": "2026-01-31",
+   "corte_hasta": "2026-02-28",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "1-30",
+   "prestamos": 5,
+   "saldo_desde": 1000000
+  },
+  {
+   "corte_desde": "2026-01-31",
+   "corte_hasta": "2026-02-28",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "31-60",
+   "prestamos": 16,
+   "saldo_desde": 2950000
+  },
+  {
+   "corte_desde": "2026-01-31",
+   "corte_hasta": "2026-02-28",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "Pagado",
+   "prestamos": 14,
+   "saldo_desde": 2450000
+  },
+  {
+   "corte_desde": "2026-01-31",
+   "corte_hasta": "2026-02-28",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "1-30",
+   "prestamos": 61,
+   "saldo_desde": 12462000
+  },
+  {
+   "corte_desde": "2026-01-31",
+   "corte_hasta": "2026-02-28",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "Al día",
+   "prestamos": 4,
+   "saldo_desde": 1150000
+  },
+  {
+   "corte_desde": "2026-01-31",
+   "corte_hasta": "2026-02-28",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "Pagado",
+   "prestamos": 92,
+   "saldo_desde": 16360000
+  },
+  {
+   "corte_desde": "2026-02-28",
+   "corte_hasta": "2026-03-31",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "31-60",
+   "prestamos": 48,
+   "saldo_desde": 9099000
+  },
+  {
+   "corte_desde": "2026-02-28",
+   "corte_hasta": "2026-03-31",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "Pagado",
+   "prestamos": 52,
+   "saldo_desde": 11000000
+  },
+  {
+   "corte_desde": "2026-02-28",
+   "corte_hasta": "2026-03-31",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "61-90",
+   "prestamos": 9,
+   "saldo_desde": 1331000
+  },
+  {
+   "corte_desde": "2026-02-28",
+   "corte_hasta": "2026-03-31",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "Pagado",
+   "prestamos": 7,
+   "saldo_desde": 1200000
+  },
+  {
+   "corte_desde": "2026-02-28",
+   "corte_hasta": "2026-03-31",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "1-30",
+   "prestamos": 41,
+   "saldo_desde": 11612000
+  },
+  {
+   "corte_desde": "2026-02-28",
+   "corte_hasta": "2026-03-31",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "31-60",
+   "prestamos": 1,
+   "saldo_desde": 750000
+  },
+  {
+   "corte_desde": "2026-02-28",
+   "corte_hasta": "2026-03-31",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "Pagado",
+   "prestamos": 88,
+   "saldo_desde": 20245000
+  },
+  {
+   "corte_desde": "2026-03-31",
+   "corte_hasta": "2026-04-30",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "31-60",
+   "prestamos": 36,
+   "saldo_desde": 8842000
+  },
+  {
+   "corte_desde": "2026-03-31",
+   "corte_hasta": "2026-04-30",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "Pagado",
+   "prestamos": 46,
+   "saldo_desde": 14250000
+  },
+  {
+   "corte_desde": "2026-03-31",
+   "corte_hasta": "2026-04-30",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "61-90",
+   "prestamos": 41,
+   "saldo_desde": 7306000
+  },
+  {
+   "corte_desde": "2026-03-31",
+   "corte_hasta": "2026-04-30",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "Pagado",
+   "prestamos": 8,
+   "saldo_desde": 2050000
+  },
+  {
+   "corte_desde": "2026-03-31",
+   "corte_hasta": "2026-04-30",
+   "tramo_desde": "61-90",
+   "tramo_hasta": "90+",
+   "prestamos": 9,
+   "saldo_desde": 1331000
+  },
+  {
+   "corte_desde": "2026-03-31",
+   "corte_hasta": "2026-04-30",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "1-30",
+   "prestamos": 39,
+   "saldo_desde": 9450000
+  },
+  {
+   "corte_desde": "2026-03-31",
+   "corte_hasta": "2026-04-30",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "Pagado",
+   "prestamos": 96,
+   "saldo_desde": 27025000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "31-60",
+   "prestamos": 36,
+   "saldo_desde": 6285000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "61-90",
+   "prestamos": 2,
+   "saldo_desde": 520000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "Pagado",
+   "prestamos": 38,
+   "saldo_desde": 12500000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "61-90",
+   "prestamos": 30,
+   "saldo_desde": 6285000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "90+",
+   "prestamos": 1,
+   "saldo_desde": 450000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "Pagado",
+   "prestamos": 5,
+   "saldo_desde": 1450000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "61-90",
+   "tramo_hasta": "90+",
+   "prestamos": 41,
+   "saldo_desde": 7306000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "90+",
+   "tramo_hasta": "90+",
+   "prestamos": 9,
+   "saldo_desde": 1331000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "1-30",
+   "prestamos": 49,
+   "saldo_desde": 15719000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "31-60",
+   "prestamos": 3,
+   "saldo_desde": 838000
+  },
+  {
+   "corte_desde": "2026-04-30",
+   "corte_hasta": "2026-05-31",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "Pagado",
+   "prestamos": 117,
+   "saldo_desde": 39216000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "31-60",
+   "prestamos": 55,
+   "saldo_desde": 15937000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "1-30",
+   "tramo_hasta": "Pagado",
+   "prestamos": 37,
+   "saldo_desde": 13350000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "61-90",
+   "prestamos": 38,
+   "saldo_desde": 6769000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "31-60",
+   "tramo_hasta": "Pagado",
+   "prestamos": 1,
+   "saldo_desde": 200000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "61-90",
+   "tramo_hasta": "90+",
+   "prestamos": 32,
+   "saldo_desde": 6805000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "90+",
+   "tramo_hasta": "90+",
+   "prestamos": 51,
+   "saldo_desde": 9087000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "1-30",
+   "prestamos": 72,
+   "saldo_desde": 27400000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "Al día",
+   "prestamos": 2,
+   "saldo_desde": 700000
+  },
+  {
+   "corte_desde": "2026-05-31",
+   "corte_hasta": "2026-06-30",
+   "tramo_desde": "Al día",
+   "tramo_hasta": "Pagado",
+   "prestamos": 95,
+   "saldo_desde": 35140000
+  }
+ ],
+ "calidad": {
+  "pagos_duplicados": 30,
+  "pagos_antes_del_desembolso": 6,
+  "prestamos_con_solicitud_rechazada": 4,
+  "valores_distintos_de_ciudad": 20
+ },
+ "conciliacion": {
+  "prestamos": 2219,
+  "no_cuadran_con_pagos_crudos": 30,
+  "no_cuadran_sin_duplicados": 0
+ },
+ "totales": {
+  "solicitudes": 4060,
+  "prestamos": 2219,
+  "desembolsado": 688900000
+ }
+}

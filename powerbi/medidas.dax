@@ -1,0 +1,40 @@
+-- Medidas DAX del dashboard de riesgo (datos ficticios de data/fintech_demo.db)
+-- DAX measures for the risk dashboard (fictional data from data/fintech_demo.db)
+--
+-- Modelo: Calendario[Date] 1 → * prestamos[fecha_desembolso]
+--         prestamos[prestamo_id] 1 → * cartera_cierre[prestamo_id]
+--         solicitudes[solicitud_id] 1 → 1 prestamos[solicitud_id]  (de ahí sale el canal)
+
+Calendario =
+ADDCOLUMNS (
+    CALENDAR ( DATE ( 2026, 1, 1 ), DATE ( 2026, 6, 30 ) ),
+    "Mes", FORMAT ( [Date], "yyyy-mm" )
+)
+
+Monto desembolsado = SUM ( prestamos[monto] )
+
+Numero de prestamos = COUNTROWS ( prestamos )
+
+Tasa de aprobacion =
+DIVIDE (
+    CALCULATE ( COUNTROWS ( solicitudes ), solicitudes[decision] = "Aprobada" ),
+    COUNTROWS ( solicitudes )
+)
+
+Saldo mora 30+ =
+CALCULATE (
+    SUM ( cartera_cierre[saldo] ),
+    cartera_cierre[dias_mora] > 30,
+    cartera_cierre[fecha_corte] = DATE ( 2026, 6, 30 )
+)
+
+-- Por cosecha: el filtro del calendario viaja de prestamos a cartera_cierre
+% Mora 30+ = DIVIDE ( [Saldo mora 30+], [Monto desembolsado] )
+
+Desembolsado mes anterior =
+CALCULATE ( [Monto desembolsado], DATEADD ( Calendario[Date], -1, MONTH ) )
+
+Variacion mensual % =
+DIVIDE ( [Monto desembolsado] - [Desembolsado mes anterior], [Desembolsado mes anterior] )
+
+Desembolsado YTD = TOTALYTD ( [Monto desembolsado], Calendario[Date] )
