@@ -461,6 +461,12 @@ const CODE = [
   { path: "python/exportar_demos.py", es: "Corre el SQL y publica los datos del sitio, con un control que bloquea si no cuadra.", en: "Runs the SQL and publishes the site data, with a control that blocks on mismatch." },
   { path: "python/reporte_kpis.py", es: "pandas: limpieza, conciliación, Excel de KPIs y un control que se puede romper a propósito.", en: "pandas: cleaning, reconciliation, a KPI workbook and a control you can break on purpose." },
   { path: "powerbi/medidas.dax", es: "Medidas DAX del dashboard de riesgo.", en: "DAX measures for the risk dashboard." },
+  { path: "python/automatizacion/cliente_api.py", es: "API con token OAuth renovable, exportación asíncrona y reintentos con espera exponencial.", en: "API client with a refreshable OAuth token, async exports and exponential-backoff retries." },
+  { path: "python/automatizacion/despacho_sftp.py", es: "Despacho diario por SFTP: idempotente, con reintentos, evidencia sha256 y llave del servidor verificada.", en: "Daily SFTP dispatch: idempotent, with retries, sha256 evidence and a verified server key." },
+  { path: "python/automatizacion/etl_csv_estrella.py", es: "ETL de CSV a modelo estrella: detecta el tipo de archivo, deduplica, hace upsert y detecta días sin datos.", en: "CSV-to-star-schema ETL: detects file types, deduplicates, upserts and flags days with no data." },
+  { path: "python/automatizacion/direcciones.py", es: "Normaliza direcciones y retiene las que se parecen a una que ya falló; con pruebas unitarias.", en: "Normalizes addresses and holds the ones that resemble a bounced address; with unit tests." },
+  { path: "python/automatizacion/alerta_sin_datos.py", es: "Alerta cuando no llegan datos, no solo cuando hay un error.", en: "Alerts when data does not arrive, not only when something errors." },
+  { path: "python/automatizacion/cifrar_resultados.py", es: "Barrera contra datos personales, agregación y cifrado AES-256-GCM.", en: "Personal-data guard, aggregation and AES-256-GCM encryption." },
 ];
 
 // Palabras que aparecen en la portada (herramientas del CV y conceptos de ingeniería y riesgo)

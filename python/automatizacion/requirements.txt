@@ -1,0 +1,3 @@
+requests        # cliente_api.py (modo real)
+paramiko        # despacho_sftp.py (modo real)
+cryptography    # cifrar_resultados.py

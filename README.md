@@ -59,7 +59,7 @@ Descritos sin nombres de clientes, bancos, contrapartes ni montos. El detalle de
 |---|---|
 | `index.html`, `assets/` | Portafolio bilingüe (GitHub Pages) |
 | `sql/` | Aprobación por canal, mora por cosecha, roll rate, calidad de datos y conciliación |
-| `python/` | Generador de datos ficticios, exportador de demos y reporte de KPIs con pandas |
+| `python/` | Generador de datos ficticios, exportador de demos, reporte de KPIs con pandas y [`automatizacion/`](python/automatizacion/): API con OAuth, SFTP, ETL, alertas y cifrado |
 | `powerbi/` | Medidas DAX del dashboard de riesgo |
 | `data/` | `fintech_demo.db` (SQLite ficticio) y `demos.json` |
 
