@@ -133,6 +133,7 @@
     const cv = $("#cv-link");
     if (CONFIG.cvUrl) {
       cv.href = CONFIG.cvUrl;
+      cv.setAttribute("download", "Javier_Daza_CV.pdf");
       cv.textContent = t("cvDownload");
       cv.removeAttribute("aria-disabled");
     } else {

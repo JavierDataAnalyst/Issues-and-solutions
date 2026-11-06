@@ -6,7 +6,7 @@ const CONFIG = {
   githubUrl: "https://github.com/JavierDataAnalyst",
   linkedinUrl: "https://www.linkedin.com/in/javier-daza-5201b1176/",
   email: "javier.m.daza.p@gmail.com",
-  cvUrl: null, // p. ej. "cv/Javier_Daza_CV.pdf" cuando esté el PDF
+  cvUrl: "cv/Javier_Daza_CV.pdf", // versión pública, sin teléfono
 };
 
 const UI = {
