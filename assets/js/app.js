@@ -26,21 +26,99 @@
   const tramo = (x) => (lang === "en" && TRAMO_EN[x]) || (x === "Pagado" ? t("paid") : x);
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
-  // ------------------------------------------------------------ portada: mosaico de datos
-  function renderArt() {
-    const art = $("#hero-art");
-    const cols = 12, rows = 6;
-    const tiles = [];
-    for (let r = 0; r < rows; r++) {
-      for (let c = 0; c < cols; c++) {
-        // un "foco" naranja, como un mapa de calor sobre una cuadrícula azul
-        const d = Math.hypot(c - 7.4, (r - 2) * 1.2);
-        const cls = d < 1.6 ? "tile hot" : d < 2.7 ? "tile warm" : "tile";
-        const shade = 0.55 + 0.45 * Math.abs(Math.sin(r * 1.7 + c * 0.9));
-        tiles.push(`<span class="${cls}" style="opacity:${cls === "tile" ? shade.toFixed(2) : 1}"></span>`);
-      }
+  // ------------------------------------------------------------ portada: texto cifrado con palabras clave
+  // Un campo de caracteres que cambian (como datos cifrados) sobre una cuadrícula azul; las palabras de
+  // KEYWORDS se "descifran", se quedan unos segundos y se desvanecen, intercalándose.
+  function initMatrix() {
+    const box = $("#hero-art");
+    box.innerHTML = '<canvas aria-hidden="true"></canvas>';
+    const cv = box.querySelector("canvas");
+    const ctx = cv.getContext("2d");
+    const CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=";
+    const FS = 13, LH = 18, CW = 8;
+    const MONO = "ui-monospace, SFMono-Regular, Menlo, Consolas, monospace";
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const rnd = (n) => Math.floor(Math.random() * n);
+    const ch = () => CHARS[rnd(CHARS.length)];
+    let W = 0, H = 0, cols = 0, rows = 0, grid = [], words = [], visible = true, last = 0;
+
+    function addWord(now, age = 0) {
+      const list = KEYWORDS[lang];
+      const text = list[rnd(list.length)];
+      if (text.length + 2 > cols) return;
+      const row = rnd(rows), col = rnd(cols - text.length);
+      const choca = words.some((w) => Math.abs(w.row - row) < 1 && col < w.col + w.text.length + 2 && w.col < col + text.length + 2);
+      if (choca || words.some((w) => w.text === text)) return;
+      words.push({ text, row, col, born: now - age, life: 5200 + rnd(3800), tone: Math.random() < 0.55 ? "143, 180, 255" : "222, 228, 238" });
     }
-    art.innerHTML = tiles.join("");
+
+    function size() {
+      const dpr = Math.min(2, window.devicePixelRatio || 1);
+      W = box.clientWidth; H = box.clientHeight;
+      cv.width = W * dpr; cv.height = H * dpr;
+      cv.style.width = `${W}px`; cv.style.height = `${H}px`;
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cols = Math.ceil(W / CW); rows = Math.ceil(H / LH);
+      grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => ({ c: ch(), a: 0.10 + Math.random() * 0.28 })));
+      words = [];
+      const now = performance.now();
+      for (let i = 0; i < 40 && words.length < Math.max(4, Math.round(rows / 2)); i++) addWord(now, 1200 + rnd(2500));
+    }
+
+    function draw(now) {
+      if (!reduce) requestAnimationFrame(draw);
+      if (!visible || (now - last < 55 && !reduce)) return; // ~18 cuadros por segundo
+      last = now;
+      ctx.clearRect(0, 0, W, H);
+
+      // cuadrícula azul de fondo
+      const T = 44, G = 6;
+      for (let y = 4; y < H; y += T + G) {
+        for (let x = 4; x < W; x += T + G) {
+          ctx.fillStyle = "rgba(38, 66, 140, .30)";
+          ctx.strokeStyle = "rgba(130, 160, 230, .16)";
+          ctx.beginPath();
+          ctx.roundRect ? ctx.roundRect(x, y, T, T, 3) : ctx.rect(x, y, T, T);
+          ctx.fill(); ctx.stroke();
+        }
+      }
+
+      // caracteres que mutan
+      if (!reduce) for (let k = 0; k < cols * rows * 0.012; k++) grid[rnd(rows)][rnd(cols)].c = ch();
+      words = words.filter((w) => now - w.born < w.life);
+      const ocupado = new Set();
+      words.forEach((w) => { for (let i = 0; i < w.text.length; i++) ocupado.add(w.row * cols + w.col + i); });
+      ctx.font = `${FS}px ${MONO}`;
+      ctx.textBaseline = "top";
+      for (let r = 0; r < rows; r++) {
+        for (let c = 0; c < cols; c++) {
+          if (ocupado.has(r * cols + c)) continue;
+          const cell = grid[r][c];
+          ctx.fillStyle = `rgba(150, 164, 190, ${cell.a})`;
+          ctx.fillText(cell.c, c * CW, r * LH + 2);
+        }
+      }
+
+      // palabras clave: se descifran letra por letra, se mantienen y se desvanecen
+      ctx.font = `600 ${FS}px ${MONO}`;
+      words.forEach((w) => {
+        const t = now - w.born;
+        const listas = Math.floor(w.text.length * Math.min(1, t / 900));
+        const fade = Math.min(1, t / 300, (w.life - t) / 900);
+        for (let i = 0; i < w.text.length; i++) {
+          if (w.text[i] === " ") continue;
+          const lista = i < listas;
+          ctx.fillStyle = `rgba(${w.tone}, ${(fade * (lista ? 0.95 : 0.35)).toFixed(2)})`;
+          ctx.fillText(lista ? w.text[i] : ch(), (w.col + i) * CW, w.row * LH + 2);
+        }
+      });
+      if (!reduce && words.length < Math.max(4, Math.round(rows / 2)) && Math.random() < 0.08) addWord(now);
+    }
+
+    size();
+    if ("ResizeObserver" in window) new ResizeObserver(() => { size(); if (reduce) draw(performance.now()); }).observe(box);
+    if ("IntersectionObserver" in window) new IntersectionObserver(([e]) => { visible = e.isIntersecting; }).observe(box);
+    draw(performance.now());
   }
 
   // ------------------------------------------------------------ textos
@@ -100,6 +178,7 @@
       const box = document.getElementById(id);
       box.querySelector("h3").textContent = DEMOS[k].title[lang];
       box.querySelector(".read").textContent = DEMOS[k].read[lang];
+      box.querySelector(".note").textContent = DEMOS[k].note[lang];
     });
   }
 
@@ -117,7 +196,7 @@
       return +((a / s) * 100).toFixed(1);
     });
     const colores = { Web: css("--c-web"), App: css("--c-app"), WhatsApp: css("--c-wa") };
-    const ds = CANALES.map((c) => ({ label: c, data: serie(c), borderColor: colores[c], backgroundColor: colores[c], tension: .3, pointRadius: 4, borderWidth: 3 }));
+    const ds = CANALES.map((c) => ({ label: c, data: serie(c), borderColor: colores[c], backgroundColor: colores[c], tension: .25, pointRadius: 3, borderWidth: 2.2 }));
     ds.push({ label: t("total"), data: total, borderColor: css("--c-total"), backgroundColor: css("--c-total"), borderDash: [6, 5], tension: .3, pointRadius: 3, borderWidth: 2 });
     if (chart) chart.destroy();
     if (!window.Chart) return;
@@ -140,24 +219,29 @@
     });
   }
 
-  const RISK = "255, 93, 93";
-  const GOOD = "34, 211, 166";
-  const shade = (v, max, rgb) => `rgba(${rgb}, ${(0.12 + 0.6 * Math.min(1, v / (max || 1))).toFixed(2)})`;
+  // tonos sobrios: rojo vino para riesgo, verde oscuro para mejora
+  const RISK = "153, 27, 27";
+  const GOOD = "15, 118, 88";
+  const shade = (v, max, rgb) => `rgba(${rgb}, ${(0.18 + 0.5 * Math.min(1, v / (max || 1))).toFixed(2)})`;
 
   function renderVintage() {
     const cosechas = [...new Set(data.mora.map((r) => r.cosecha))].sort();
     // ratio exacto desde los montos: mora_30 viene redondeado a 4 decimales en el SQL
     const ratio = (r) => r && r.saldo_mora_30 / r.desembolsado;
     const max = Math.max(...data.mora.filter((r) => data.madurez[r.cosecha]).map(ratio));
-    const head = `<tr><th class="row"></th>${CANALES.map((c) => `<th>${c}</th>`).join("")}<th>${esc(t("total"))}</th></tr>`;
+    const suma = (rs) => rs.reduce((a, r) => a + r.saldo_mora_30, 0) / rs.reduce((a, r) => a + r.desembolsado, 0);
+    const head = `<tr><th class="row">${lang === "es" ? "Cosecha" : "Vintage"}</th>${CANALES.map((c) => `<th>${c}</th>`).join("")}<th>${esc(t("total"))}</th></tr>`;
+    const cell = (v, heat = true) => (v === undefined ? "<td>—</td>"
+      : `<td style="background:${heat && v ? shade(v, max, RISK) : "transparent"}">${v ? pct(v) : "–"}</td>`);
     const rows = cosechas.map((c) => {
       const rs = data.mora.filter((r) => r.cosecha === c);
-      const tot = rs.reduce((a, r) => a + r.saldo_mora_30, 0) / rs.reduce((a, r) => a + r.desembolsado, 0);
-      const cell = (v) => (v === undefined ? "<td>—</td>" : `<td style="background:${v ? shade(v, max, RISK) : "transparent"}">${pct(v)}</td>`);
       const madura = data.madurez[c];
-      return `<tr class="${madura ? "" : "immature"}"><th class="row">${mes(c)} 2026${madura ? "" : `<span class="badge">${esc(t("notMature"))}</span>`}</th>${CANALES.map((k) => cell(ratio(rs.find((r) => r.canal === k)))).join("")}${cell(tot)}</tr>`;
+      return `<tr class="${madura ? "" : "immature"}"><th class="row">${mes(c)} 2026${madura ? "" : `<span class="badge">${esc(t("notMature"))}</span>`}</th>${CANALES.map((k) => cell(ratio(rs.find((r) => r.canal === k)))).join("")}<td class="risk-text">${pct(suma(rs))}</td></tr>`;
     });
-    $("#table-vintage").innerHTML = `<thead>${head}</thead><tbody>${rows.join("")}</tbody>`;
+    // fila total solo con cosechas maduras: sumar las que no han madurado bajaría la mora artificialmente
+    const maduras = data.mora.filter((r) => data.madurez[r.cosecha]);
+    const total = `<tr class="total"><th class="row">${lang === "es" ? "Total maduras" : "Mature total"}</th>${CANALES.map((k) => `<td>${pct(suma(maduras.filter((r) => r.canal === k)))}</td>`).join("")}<td class="risk-text">${pct(suma(maduras))}</td></tr>`;
+    $("#table-vintage").innerHTML = `<thead>${head}</thead><tbody>${rows.join("")}${total}</tbody>`;
   }
 
   function renderRoll() {
@@ -181,8 +265,8 @@
         const v = (rs.find((r) => r.tramo_hasta === hacia) || {})[rollMode] || 0;
         const p = v / tot;
         const peor = hacia !== "Pagado" && j > i;
-        const color = !v ? "transparent" : (j === i ? "rgba(120, 130, 160, .22)" : shade(p, 1, peor ? RISK : GOOD));
-        return `<td style="background:${color}" title="${v.toLocaleString()}">${v ? pct(p) : "·"}</td>`;
+        const color = !v ? "transparent" : (j === i ? "rgba(120, 128, 145, .16)" : shade(p, 1, peor ? RISK : GOOD));
+        return `<td style="background:${color}" title="${v.toLocaleString()}">${v ? pct(p) : "–"}</td>`;
       }).join("");
       return `<tr><th class="row">${esc(tramo(desde))}</th>${tds}</tr>`;
     }).join("");
@@ -262,7 +346,7 @@
     renderRoll();
   }));
 
-  renderArt();
   renderText();
+  initMatrix();
   fetch("data/demos.json").then((r) => r.json()).then((d) => { data = d; renderDemos(); });
 })();

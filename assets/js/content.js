@@ -399,6 +399,10 @@ const DEMOS = {
       en: "WhatsApp launches in April and total approval drops from 59.5% to 50.7%, while Web and App stay near 60%. That month's drop is applicant mix, not a policy change.",
     },
     sql: "sql/01_aprobacion_por_canal.sql",
+    note: {
+      es: "Tasa de aprobación = solicitudes aprobadas ÷ solicitudes del mes. Total = todas las solicitudes del mes. Fuente: datos ficticios (data/fintech_demo.db).",
+      en: "Approval rate = approved applications ÷ applications in the month. Total = all applications in the month. Source: fictional data (data/fintech_demo.db).",
+    },
   },
   vintage: {
     title: { es: "Mora 30+ por cosecha: solo se comparan cosechas maduras", en: "30+ DPD by vintage: compare only mature vintages" },
@@ -407,6 +411,10 @@ const DEMOS = {
       en: "In the April vintage, WhatsApp shows 12.3% 30+ DPD versus ~7.5% for Web and App: 1.6 times higher. May and June have not matured yet; a low figure there is not an improvement.",
     },
     sql: "sql/02_mora_por_cosecha.sql",
+    note: {
+      es: "Mora 30+ = saldo con más de 30 días de mora al 30-jun-2026 ÷ monto desembolsado de la cosecha. Cosecha = mes de desembolso. Las cosechas sin madurar se muestran atenuadas. Fuente: datos ficticios.",
+      en: "30+ DPD = balance more than 30 days past due on 2026-06-30 ÷ amount disbursed in the vintage. Vintage = disbursement month. Immature vintages are dimmed. Source: fictional data.",
+    },
   },
   roll: {
     title: { es: "Roll rate: de un cierre de mes al siguiente", en: "Roll rate: from one month-end to the next" },
@@ -415,6 +423,10 @@ const DEMOS = {
       en: "Each row adds up to 100%. 'Paid off' are loans that left the portfolio: an INNER JOIN would drop them and bias the roll rate.",
     },
     sql: "sql/03_roll_rate.sql",
+    note: {
+      es: "Filas: tramo de mora al cierre de origen. Columnas: tramo al cierre siguiente. Cada fila suma 100 % por conteo o por saldo. Rojo = empeoró; verde = mejoró o pagó. Fuente: datos ficticios.",
+      en: "Rows: delinquency bucket at the starting month-end. Columns: bucket at the next month-end. Each row adds up to 100% by count or balance. Red = worsened; green = improved or paid off. Source: fictional data.",
+    },
   },
   quality: {
     title: { es: "Calidad de datos: antes de publicar una cifra", en: "Data quality: before publishing a figure" },
@@ -424,6 +436,10 @@ const DEMOS = {
     },
     sql: "sql/04_calidad_de_datos.sql",
     sql2: "sql/05_conciliacion_saldos.sql",
+    note: {
+      es: "Conciliación: saldo recalculado (monto − pagos) contra la foto oficial del cierre de junio. Fuente: datos ficticios con errores introducidos a propósito.",
+      en: "Reconciliation: recomputed balance (amount − payments) against the official June month-end snapshot. Source: fictional data with deliberately introduced errors.",
+    },
     labels: {
       es: { pagos_duplicados: "Pagos duplicados", pagos_antes_del_desembolso: "Pagos antes del desembolso", prestamos_con_solicitud_rechazada: "Préstamos con solicitud rechazada", ciudades: "Ciudades: valores crudos → normalizados", conc: "Préstamos que no cuadran: pagos crudos → sin duplicados" },
       en: { pagos_duplicados: "Duplicate payments", pagos_antes_del_desembolso: "Payments before disbursement", prestamos_con_solicitud_rechazada: "Loans with a rejected application", ciudades: "Cities: raw values → normalized", conc: "Loans that do not reconcile: raw payments → deduplicated" },
@@ -442,3 +458,15 @@ const CODE = [
   { path: "python/reporte_kpis.py", es: "pandas: limpieza, conciliación, Excel de KPIs y un control que se puede romper a propósito.", en: "pandas: cleaning, reconciliation, a KPI workbook and a control you can break on purpose." },
   { path: "powerbi/medidas.dax", es: "Medidas DAX del dashboard de riesgo.", en: "DAX measures for the risk dashboard." },
 ];
+
+// Palabras que aparecen en la portada (herramientas del CV y conceptos de ingeniería y riesgo)
+const KEYWORDS = (() => {
+  const comunes = ["SQL", "Python", "Power BI", "DAX", "Power Query", "Excel", "PostgreSQL", "SQL Server", "MySQL",
+    "SuiteQL", "CTEs", "Window functions", "Kimball", "ETL", "pandas", "REST APIs", "OData", "GitHub Actions",
+    "Supabase", "n8n", "Zoho Analytics", "Tableau", "AWS S3", "AWS Glue", "Athena", "Lambda", "Claude Code", "Git",
+    "Roll rates", "DPD", "NPL", "PAR", "UPB", "Covenants", "NIM", "ROA", "ROE", "First-payment default"];
+  return {
+    es: [...comunes, "Cosechas", "Calidad de datos", "Riesgo de crédito", "Modelado dimensional", "Ingeniería de producción", "Automatización", "Conciliación"],
+    en: [...comunes, "Vintages", "Data quality", "Credit risk", "Dimensional modeling", "Production engineering", "Automation", "Reconciliation"],
+  };
+})();
