@@ -4,7 +4,10 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Javier Daza · BI y Riesgo de Crédito</title>
-  <meta name="description" content="Portafolio de Javier Daza: BI, SQL, Python, Power BI y Excel aplicados a riesgo de crédito. Demos con datos ficticios.">
+  <meta name="description" content="Hoja de vida y portafolio de Javier Daza: BI, SQL, Python, Power BI y Excel aplicados a riesgo de crédito. Demos con datos ficticios.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="assets/css/styles.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js" defer></script>
   <script src="assets/js/content.js" defer></script>
@@ -12,122 +15,125 @@
 </head>
 <body>
   <header class="topbar">
-    <div class="wrap topbar-in">
-      <a class="brand" href="#inicio">Javier Daza</a>
-      <nav class="nav" aria-label="Secciones">
-        <a href="#proyectos" data-i18n="navProjects"></a>
-        <a href="#demos" data-i18n="navDemos"></a>
-        <a href="#codigo" data-i18n="navCode"></a>
-        <a href="#powerbi" data-i18n="navPowerbi"></a>
-        <a href="#cv" data-i18n="navCv"></a>
-      </nav>
-      <button class="lang" id="lang" type="button" aria-label="Cambiar idioma / Switch language">EN</button>
+    <div class="wrap bar">
+      <a class="brand" href="#inicio" aria-label="Inicio">
+        <span class="mono">JD</span>
+        <span class="brand-text"><small data-i18n="brandKicker"></small><b>Javier Daza</b></span>
+      </a>
+      <div class="bar-actions">
+        <button class="pill" id="lang" type="button" aria-label="Cambiar idioma / Switch language">EN</button>
+        <a class="pill solid" id="cv-link" href="#"></a>
+      </div>
     </div>
+    <nav class="wrap tabs" aria-label="Secciones">
+      <a href="#perfil" data-i18n="navProfile"></a>
+      <a href="#experiencia" data-i18n="navExperience"></a>
+      <a href="#proyectos" data-i18n="navProjects"></a>
+      <a href="#demos" data-i18n="navDemos"></a>
+      <a href="#codigo" data-i18n="navCode"></a>
+      <a href="#powerbi" data-i18n="navPowerbi"></a>
+    </nav>
   </header>
 
-  <main>
+  <main class="wrap">
+    <!-- Portada tipo hoja de vida -->
     <section class="hero" id="inicio">
-      <div class="wrap">
-        <p class="eyebrow" data-i18n="role"></p>
-        <h1>Javier Daza</h1>
+      <div class="hero-copy">
+        <span class="dash" aria-hidden="true"></span>
+        <h1 data-i18n="fullName"></h1>
+        <p class="role" data-i18n="role"></p>
         <p class="tagline" data-i18n="tagline"></p>
-        <p class="bio" data-i18n="bio"></p>
-        <div class="cta">
-          <a class="btn primary" href="#proyectos" data-i18n="ctaProjects"></a>
-          <a class="btn" href="#demos" data-i18n="ctaDemos"></a>
-          <a class="btn ghost" id="linkedin-link" href="#" target="_blank" rel="noopener">LinkedIn</a>
-          <a class="btn ghost" id="github-link" href="#" target="_blank" rel="noopener">GitHub</a>
-          <a class="btn ghost" id="email-link" href="#">Email</a>
+        <div class="contact">
+          <span class="pill ghost"><i class="dot blue"></i><span data-i18n="location"></span></span>
+          <a class="pill ghost" id="email-link" href="#"><i class="dot orange"></i>Email</a>
+          <a class="pill ghost" id="linkedin-link" href="#" target="_blank" rel="noopener"><i class="dot blue"></i>LinkedIn</a>
+          <a class="pill ghost" id="github-link" href="#" target="_blank" rel="noopener"><i class="dot cyan"></i>GitHub</a>
         </div>
-        <div class="stats" id="stats"></div>
-        <p class="note" data-i18n="privacy"></p>
       </div>
+      <div class="hero-art" id="hero-art" aria-hidden="true"></div>
     </section>
 
-    <section class="band" id="habilidades">
-      <div class="wrap">
-        <h2 data-i18n="skillsTitle"></h2>
-        <div class="skills" id="skills"></div>
-      </div>
+    <section class="stats" id="stats" aria-label="Cifras"></section>
+
+    <!-- Perfil: panel resumen -->
+    <section class="panel" id="perfil">
+      <p class="kicker center" data-i18n="summaryKicker"></p>
+      <h2 class="center" data-i18n="summaryTitle"></h2>
+      <p class="sub center" data-i18n="summarySub"></p>
+      <p class="bio center" data-i18n="bio"></p>
+      <div class="skills" id="skills"></div>
     </section>
 
-    <section id="proyectos">
-      <div class="wrap">
-        <h2 data-i18n="projectsTitle"></h2>
-        <p class="intro" data-i18n="projectsIntro"></p>
-        <div class="projects" id="projects"></div>
-      </div>
+    <!-- Experiencia y educación -->
+    <section class="block" id="experiencia">
+      <h2 class="section-title" data-i18n="experienceTitle"></h2>
+      <div class="timeline" id="timeline"></div>
+      <h3 class="section-sub" data-i18n="educationTitle"></h3>
+      <div class="edu" id="education"></div>
     </section>
 
-    <section class="band" id="demos">
-      <div class="wrap">
-        <h2 data-i18n="demosTitle"></h2>
-        <p class="intro" data-i18n="demosIntro"></p>
+    <section class="block" id="proyectos">
+      <h2 class="section-title" data-i18n="projectsTitle"></h2>
+      <p class="intro" data-i18n="projectsIntro"></p>
+      <div class="projects" id="projects"></div>
+    </section>
 
-        <article class="demo" id="demo-approval">
-          <h3></h3>
-          <div class="chart-box"><canvas id="chart-approval" aria-label="Aprobación por canal"></canvas></div>
-          <p class="read"></p>
-          <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
-        </article>
+    <section class="block" id="demos">
+      <h2 class="section-title" data-i18n="demosTitle"></h2>
+      <p class="intro" data-i18n="demosIntro"></p>
 
-        <article class="demo" id="demo-vintage">
-          <h3></h3>
-          <div class="table-scroll"><table class="heat" id="table-vintage"></table></div>
-          <p class="read"></p>
-          <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
-        </article>
+      <article class="card demo" id="demo-approval">
+        <h3></h3>
+        <div class="chart-box"><canvas id="chart-approval" aria-label="Aprobación por canal"></canvas></div>
+        <p class="read"></p>
+        <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
+      </article>
 
-        <article class="demo" id="demo-roll">
-          <h3></h3>
-          <div class="controls">
-            <label><span data-i18n="from"></span> <select id="roll-month"></select></label>
-            <div class="toggle" role="group">
-              <button type="button" data-mode="prestamos" class="on" data-i18n="count"></button>
-              <button type="button" data-mode="saldo_desde" data-i18n="balance"></button>
-            </div>
+      <article class="card demo" id="demo-vintage">
+        <h3></h3>
+        <div class="table-scroll"><table class="heat" id="table-vintage"></table></div>
+        <p class="read"></p>
+        <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
+      </article>
+
+      <article class="card demo" id="demo-roll">
+        <h3></h3>
+        <div class="controls">
+          <label class="pill ghost"><span data-i18n="from"></span> <select id="roll-month"></select></label>
+          <div class="toggle" role="group">
+            <button type="button" data-mode="prestamos" class="on" data-i18n="count"></button>
+            <button type="button" data-mode="saldo_desde" data-i18n="balance"></button>
           </div>
-          <div class="table-scroll"><table class="heat" id="table-roll"></table></div>
-          <p class="read"></p>
-          <p class="read strong" id="roll-sentence"></p>
-          <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
-        </article>
+        </div>
+        <div class="table-scroll"><table class="heat" id="table-roll"></table></div>
+        <p class="read"></p>
+        <p class="read strong" id="roll-sentence"></p>
+        <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
+      </article>
 
-        <article class="demo" id="demo-quality">
-          <h3></h3>
-          <div class="tiles" id="tiles-quality"></div>
-          <p class="read"></p>
-          <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
-        </article>
-      </div>
+      <article class="card demo" id="demo-quality">
+        <h3></h3>
+        <div class="tiles" id="tiles-quality"></div>
+        <p class="read"></p>
+        <details class="sql"><summary data-i18n="viewSql"></summary><pre><code></code></pre></details>
+      </article>
     </section>
 
-    <section id="codigo">
-      <div class="wrap">
-        <h2 data-i18n="codeTitle"></h2>
-        <p class="intro" data-i18n="codeIntro"></p>
-        <div class="code-list" id="code-list"></div>
-      </div>
+    <section class="block" id="codigo">
+      <h2 class="section-title" data-i18n="codeTitle"></h2>
+      <p class="intro" data-i18n="codeIntro"></p>
+      <div class="code-list" id="code-list"></div>
     </section>
 
-    <section class="band" id="powerbi">
-      <div class="wrap">
-        <h2 data-i18n="powerbiTitle"></h2>
-        <p class="intro" data-i18n="powerbiIntro"></p>
-        <pre class="dax"><code id="dax"></code></pre>
-      </div>
-    </section>
-
-    <section id="cv">
-      <div class="wrap">
-        <h2 data-i18n="cvTitle"></h2>
-        <a class="btn primary" id="cv-link" href="#"></a>
-      </div>
+    <section class="block" id="powerbi">
+      <h2 class="section-title" data-i18n="powerbiTitle"></h2>
+      <p class="intro" data-i18n="powerbiIntro"></p>
+      <pre class="dax"><code id="dax"></code></pre>
     </section>
   </main>
 
   <footer class="footer">
-    <div class="wrap"><p data-i18n="footer"></p></div>
+    <div class="wrap"><p data-i18n="privacy"></p><p data-i18n="footer"></p></div>
   </footer>
 </body>
 </html>

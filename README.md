@@ -14,10 +14,12 @@ Soy analista de datos enfocado en **resolver dudas de negocio** con **SQL**. Mi 
 Trabajo mucho con **window functions**, **CTEs**, deduplicación, estandarización (E.164) y construcción de **funnels** para tomar decisiones con evidencia, no con suposiciones.
 
 ## Experiencia
-**Analista de BI y Riesgo de Crédito** · financiera de crédito al consumo en Puerto Rico  
-Soy el único analista de datos de la empresa y llevo los proyectos de punta a punta: de la API y el SQL al dashboard, la automatización y la conversación con gerencia, del CEO a contabilidad.
+**Analista de Datos Biz Ops · BI y Riesgo de Cartera** · financiera de crédito al consumo (Puerto Rico y Florida, remoto desde Bogotá) · 2024 – hoy  
+Llevo los proyectos de punta a punta: de la API y el SQL al dashboard, la automatización y la conversación con gerencia, del CEO a contabilidad.
 
-**Formación:** Ingeniero de producción, con 3 años de experiencia en datos en banca y marketing.
+**Antes:** Analista de Marketing Comercial · Kimberly-Clark · 2021 (prácticas).
+
+**Formación:** Ingeniero de Producción, Universidad Distrital (2020 – 2023) · Tecnólogo Industrial, Universidad Distrital (2015 – 2019).
 
 Resultados destacados:
 - **Certificado de la línea de crédito bancaria**: lo recalculé desde la fuente y lo dejé auditable; las filas que cuadran pasaron de **269 a 301** y consultas de auditoría independientes reproducen **441 de 441** cifras.

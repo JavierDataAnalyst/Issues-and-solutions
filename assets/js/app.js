@@ -1,4 +1,4 @@
-// Render del portafolio: textos bilingües, proyectos y demos sobre data/demos.json.
+// Render del portafolio: hoja de vida bilingüe, proyectos y demos sobre data/demos.json.
 (() => {
   const TRAMOS = ["Al día", "1-30", "31-60", "61-90", "90+"];
   const TRAMO_EN = { "Al día": "Current", "Pagado": "Paid off" };
@@ -11,6 +11,7 @@
     return n;
   };
   const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+  const bold = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>");
 
   let lang = "es";
   try { lang = localStorage.getItem("lang") || (navigator.language || "es").slice(0, 2); } catch (e) { /* sin almacenamiento */ }
@@ -25,6 +26,23 @@
   const tramo = (x) => (lang === "en" && TRAMO_EN[x]) || (x === "Pagado" ? t("paid") : x);
   const css = (name) => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 
+  // ------------------------------------------------------------ portada: mosaico de datos
+  function renderArt() {
+    const art = $("#hero-art");
+    const cols = 12, rows = 6;
+    const tiles = [];
+    for (let r = 0; r < rows; r++) {
+      for (let c = 0; c < cols; c++) {
+        // un "foco" naranja, como un mapa de calor sobre una cuadrícula azul
+        const d = Math.hypot(c - 7.4, (r - 2) * 1.2);
+        const cls = d < 1.6 ? "tile hot" : d < 2.7 ? "tile warm" : "tile";
+        const shade = 0.55 + 0.45 * Math.abs(Math.sin(r * 1.7 + c * 0.9));
+        tiles.push(`<span class="${cls}" style="opacity:${cls === "tile" ? shade.toFixed(2) : 1}"></span>`);
+      }
+    }
+    art.innerHTML = tiles.join("");
+  }
+
   // ------------------------------------------------------------ textos
   function renderText() {
     document.documentElement.lang = lang;
@@ -34,22 +52,38 @@
     $("#linkedin-link").href = CONFIG.linkedinUrl;
     $("#email-link").href = `mailto:${CONFIG.email}`;
 
-    const stats = $("#stats");
-    stats.replaceChildren(...t("stats").map(([b, s]) => el("div", "stat", `<b>${esc(b)}</b><span>${esc(s)}</span>`)));
+    const cv = $("#cv-link");
+    if (CONFIG.cvUrl) {
+      cv.href = CONFIG.cvUrl;
+      cv.textContent = t("cvDownload");
+      cv.removeAttribute("aria-disabled");
+    } else {
+      cv.textContent = t("cvSoon");
+      cv.setAttribute("aria-disabled", "true");
+    }
 
-    $("#skills").replaceChildren(...SKILLS.map((g) => {
-      const card = el("div", "skill", `<h3>${esc(g[lang])}</h3>`);
-      const chips = el("div", "chips");
-      g.items.forEach((i) => chips.append(el("span", "chip", esc(i))));
-      card.append(chips);
-      return card;
-    }));
+    $("#stats").replaceChildren(...t("stats").map(([b, label, cap]) =>
+      el("div", "stat", `<small>${esc(label)}</small><b>${esc(b)}</b><span>${esc(cap)}</span>`)));
+
+    $("#skills").replaceChildren(...SKILLS.map((s) =>
+      el("div", "skill", `<p class="kicker">${esc(s.label[lang])}</p><h3>${esc(s.title[lang])}</h3><p>${esc(s.items[lang])}</p>`)));
+
+    $("#timeline").replaceChildren(...EXPERIENCE.map((j) => el("article", "card job", `
+      <span class="period">${esc(j.period[lang])}</span>
+      <h3>${esc(j.role[lang])}</h3>
+      <p class="org">${esc(j.org[lang])}</p>
+      <ul>${j.bullets[lang].map((b) => `<li>${bold(b)}</li>`).join("")}</ul>`)));
+
+    $("#education").replaceChildren(
+      ...EDUCATION.map((e) => el("div", "card", `<p class="kicker">${esc(e.period)}</p><b>${esc(e.title[lang])}</b><span>${esc(e.org)}</span>`)),
+      el("div", "card", `<p class="kicker">${esc(t("inProgress"))}</p><b>${esc(IN_PROGRESS[lang])}</b>`),
+    );
 
     $("#projects").replaceChildren(...PROJECTS.map((p) => {
-      const card = el("article", "project");
+      const card = el("article", "card project");
       card.id = `p-${p.id}`;
       card.innerHTML = `
-        <span class="tag">${esc(p.tag[lang])}</span>
+        <p class="kicker">${esc(p.tag[lang])}</p>
         <h3>${esc(p.title[lang])}</h3>
         <p>${esc(p.problem[lang])}</p>
         <h4>${esc(t("results"))}</h4>
@@ -61,16 +95,6 @@
 
     $("#code-list").replaceChildren(...CODE.map((c) => el("div", "code-item",
       `<code>${esc(c.path)}</code><p>${esc(c[lang])}</p><a href="${esc(CONFIG.repoUrl)}/blob/main/${esc(c.path)}" target="_blank" rel="noopener">${esc(t("openGithub"))} →</a>`)));
-
-    const cv = $("#cv-link");
-    if (CONFIG.cvUrl) {
-      cv.href = CONFIG.cvUrl;
-      cv.textContent = t("cvDownload");
-      cv.removeAttribute("aria-disabled");
-    } else {
-      cv.textContent = t("cvSoon");
-      cv.setAttribute("aria-disabled", "true");
-    }
 
     Object.entries({ approval: "demo-approval", vintage: "demo-vintage", roll: "demo-roll", quality: "demo-quality" }).forEach(([k, id]) => {
       const box = document.getElementById(id);
@@ -93,10 +117,11 @@
       return +((a / s) * 100).toFixed(1);
     });
     const colores = { Web: css("--c-web"), App: css("--c-app"), WhatsApp: css("--c-wa") };
-    const ds = CANALES.map((c) => ({ label: c, data: serie(c), borderColor: colores[c], backgroundColor: colores[c], tension: .25, pointRadius: 4, borderWidth: 2.5 }));
-    ds.push({ label: t("total"), data: total, borderColor: css("--c-total"), backgroundColor: css("--c-total"), borderDash: [6, 5], tension: .25, pointRadius: 3, borderWidth: 2 });
+    const ds = CANALES.map((c) => ({ label: c, data: serie(c), borderColor: colores[c], backgroundColor: colores[c], tension: .3, pointRadius: 4, borderWidth: 3 }));
+    ds.push({ label: t("total"), data: total, borderColor: css("--c-total"), backgroundColor: css("--c-total"), borderDash: [6, 5], tension: .3, pointRadius: 3, borderWidth: 2 });
     if (chart) chart.destroy();
     if (!window.Chart) return;
+    Chart.defaults.font.family = "Inter, system-ui, sans-serif";
     chart = new Chart(document.getElementById("chart-approval"), {
       type: "line",
       data: { labels: meses.map(mes), datasets: ds },
@@ -108,25 +133,29 @@
           tooltip: { callbacks: { label: (c) => `${c.dataset.label}: ${c.parsed.y}${lang === "es" ? " %" : "%"}` } },
         },
         scales: {
-          y: { suggestedMin: 20, suggestedMax: 80, ticks: { color: css("--muted"), callback: (v) => v + "%" }, grid: { color: css("--line") } },
-          x: { ticks: { color: css("--muted") }, grid: { display: false } },
+          y: { suggestedMin: 20, suggestedMax: 80, ticks: { color: css("--dim"), callback: (v) => v + "%" }, grid: { color: css("--line") } },
+          x: { ticks: { color: css("--dim") }, grid: { display: false } },
         },
       },
     });
   }
 
-  const shade = (v, max, rgb) => `rgba(${rgb}, ${(0.1 + 0.6 * Math.min(1, v / (max || 1))).toFixed(2)})`;
+  const RISK = "255, 93, 93";
+  const GOOD = "34, 211, 166";
+  const shade = (v, max, rgb) => `rgba(${rgb}, ${(0.12 + 0.6 * Math.min(1, v / (max || 1))).toFixed(2)})`;
 
   function renderVintage() {
     const cosechas = [...new Set(data.mora.map((r) => r.cosecha))].sort();
-    const max = Math.max(...data.mora.filter((r) => data.madurez[r.cosecha]).map((r) => r.mora_30));
+    // ratio exacto desde los montos: mora_30 viene redondeado a 4 decimales en el SQL
+    const ratio = (r) => r && r.saldo_mora_30 / r.desembolsado;
+    const max = Math.max(...data.mora.filter((r) => data.madurez[r.cosecha]).map(ratio));
     const head = `<tr><th class="row"></th>${CANALES.map((c) => `<th>${c}</th>`).join("")}<th>${esc(t("total"))}</th></tr>`;
     const rows = cosechas.map((c) => {
       const rs = data.mora.filter((r) => r.cosecha === c);
       const tot = rs.reduce((a, r) => a + r.saldo_mora_30, 0) / rs.reduce((a, r) => a + r.desembolsado, 0);
-      const cell = (v) => (v === undefined ? "<td>—</td>" : `<td style="background:${v ? shade(v, max, "214, 69, 69") : "transparent"}">${pct(v)}</td>`);
+      const cell = (v) => (v === undefined ? "<td>—</td>" : `<td style="background:${v ? shade(v, max, RISK) : "transparent"}">${pct(v)}</td>`);
       const madura = data.madurez[c];
-      return `<tr class="${madura ? "" : "immature"}"><th class="row">${mes(c)} 2026${madura ? "" : `<span class="badge">${esc(t("notMature"))}</span>`}</th>${CANALES.map((k) => cell(rs.find((r) => r.canal === k)?.mora_30)).join("")}${cell(tot)}</tr>`;
+      return `<tr class="${madura ? "" : "immature"}"><th class="row">${mes(c)} 2026${madura ? "" : `<span class="badge">${esc(t("notMature"))}</span>`}</th>${CANALES.map((k) => cell(ratio(rs.find((r) => r.canal === k)))).join("")}${cell(tot)}</tr>`;
     });
     $("#table-vintage").innerHTML = `<thead>${head}</thead><tbody>${rows.join("")}</tbody>`;
   }
@@ -152,7 +181,7 @@
         const v = (rs.find((r) => r.tramo_hasta === hacia) || {})[rollMode] || 0;
         const p = v / tot;
         const peor = hacia !== "Pagado" && j > i;
-        const color = !v ? "transparent" : (j === i ? "rgba(100, 116, 139, .18)" : shade(p, 1, peor ? "214, 69, 69" : "11, 138, 126"));
+        const color = !v ? "transparent" : (j === i ? "rgba(120, 130, 160, .22)" : shade(p, 1, peor ? RISK : GOOD));
         return `<td style="background:${color}" title="${v.toLocaleString()}">${v ? pct(p) : "·"}</td>`;
       }).join("");
       return `<tr><th class="row">${esc(tramo(desde))}</th>${tds}</tr>`;
@@ -172,7 +201,7 @@
     const L = DEMOS.quality.labels[lang];
     const q = data.calidad;
     const c = data.conciliacion;
-    const tile = (num, label, ok) => `<div class="tile"><b class="${ok ? "ok" : ""}">${num}</b><span>${esc(label)}</span></div>`;
+    const tile = (num, label, ok) => `<div class="tile-q"><b class="${ok ? "ok" : ""}">${num}</b><span>${esc(label)}</span></div>`;
     $("#tiles-quality").innerHTML = [
       tile(q.pagos_duplicados, L.pagos_duplicados),
       tile(q.pagos_antes_del_desembolso, L.pagos_antes_del_desembolso),
@@ -205,6 +234,20 @@
   });
   fetch("powerbi/medidas.dax").then((r) => r.text()).then((s) => { $("#dax").textContent = s; }).catch(() => {});
 
+  // ------------------------------------------------------------ pestaña activa según la sección visible
+  const tabs = [...document.querySelectorAll(".tabs a")];
+  if ("IntersectionObserver" in window) {
+    const obs = new IntersectionObserver((entries) => {
+      entries.forEach((e) => {
+        if (!e.isIntersecting) return;
+        tabs.forEach((a) => a.classList.toggle("active", a.getAttribute("href") === `#${e.target.id}`));
+      });
+    }, { rootMargin: "-45% 0px -50% 0px" });
+    tabs.forEach((a) => { const s = document.querySelector(a.getAttribute("href")); if (s) obs.observe(s); });
+    // en la portada no hay pestaña activa
+    window.addEventListener("scroll", () => { if (window.scrollY < 250) tabs.forEach((a) => a.classList.remove("active")); }, { passive: true });
+  }
+
   // ------------------------------------------------------------ idioma y arranque
   $("#lang").addEventListener("click", () => {
     lang = lang === "es" ? "en" : "es";
@@ -219,6 +262,7 @@
     renderRoll();
   }));
 
+  renderArt();
   renderText();
   fetch("data/demos.json").then((r) => r.json()).then((d) => { data = d; renderDemos(); });
 })();
