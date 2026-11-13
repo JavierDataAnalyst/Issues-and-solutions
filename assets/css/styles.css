@@ -189,7 +189,7 @@ table.heat { border-collapse: collapse; width: 100%; min-width: 560px; font-size
 /* ---------------------------------------------------------- código */
 .code-list { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 10px; }
 .code-item { background: var(--card); border: 1px solid var(--line); border-radius: 10px; padding: 15px; }
-.code-item code { color: #9fc0ff; font-weight: 600; font-size: .86rem; }
+.code-item code { color: #9fc0ff; font-weight: 600; font-size: .86rem; display: block; overflow-wrap: anywhere; }
 .code-item p { margin: .35rem 0 .65rem; color: var(--muted); font-size: .88rem; }
 .code-item a { font-weight: 600; font-size: .86rem; }
 .dax { max-height: 520px; }
