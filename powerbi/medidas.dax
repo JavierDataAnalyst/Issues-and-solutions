@@ -1,15 +1,34 @@
--- Medidas DAX del dashboard de riesgo (datos ficticios de data/fintech_demo.db)
--- DAX measures for the risk dashboard (fictional data from data/fintech_demo.db)
+-- DAX del dashboard de riesgo (datos ficticios de data/csv/)
+-- DAX for the risk dashboard (fictional data from data/csv/)
 --
--- Modelo: Calendario[Date] 1 → * prestamos[fecha_desembolso]
---         prestamos[prestamo_id] 1 → * cartera_cierre[prestamo_id]
---         solicitudes[solicitud_id] 1 → 1 prestamos[solicitud_id]  (de ahí sale el canal)
+-- Modelo / model (filtros de una sola dirección, de la dimensión a los hechos):
+--   Calendario[Date]        1 → * prestamos[fecha_desembolso]
+--   Calendario[Date]        1 → * solicitudes[fecha_solicitud]   (desactívala si Power BI marca ambigüedad)
+--   Canal[canal]            1 → * prestamos[canal]               (canal traído desde solicitudes en Power Query)
+--   Canal[canal]            1 → * solicitudes[canal]
+--   clientes[cliente_id]    1 → * prestamos[cliente_id]
+--   clientes[cliente_id]    1 → * solicitudes[cliente_id]
+--   prestamos[prestamo_id]  1 → * cartera_cierre[prestamo_id]
+--   prestamos[prestamo_id]  1 → * pagos[prestamo_id]
+-- No relaciones solicitudes con prestamos: el canal ya viaja en la columna prestamos[canal].
+
+-- ============================================================ TABLAS (Modelado → Nueva tabla)
 
 Calendario =
 ADDCOLUMNS (
     CALENDAR ( DATE ( 2026, 1, 1 ), DATE ( 2026, 6, 30 ) ),
-    "Mes", FORMAT ( [Date], "yyyy-mm" )
+    "Mes", FORMAT ( [Date], "yyyy-mm" ),
+    "Mes nombre", FORMAT ( [Date], "mmm yyyy" )
 )
+
+Canal =
+DATATABLE ( "canal", STRING, { { "Web" }, { "App" }, { "WhatsApp" } } )
+
+-- ============================================================ COLUMNA (en la tabla prestamos)
+
+Tipo de credito = IF ( prestamos[numero_credito] = 1, "Primer crédito", "Recurrente" )
+
+-- ============================================================ MEDIDAS (Inicio → Nueva medida, una por una)
 
 Monto desembolsado = SUM ( prestamos[monto] )
 
@@ -30,6 +49,10 @@ CALCULATE (
 
 -- Por cosecha: el filtro del calendario viaja de prestamos a cartera_cierre
 % Mora 30+ = DIVIDE ( [Saldo mora 30+], [Monto desembolsado] )
+
+-- Una cosecha es comparable si su último crédito (plazo máximo 30 días) pudo superar 30 días de mora al corte
+Cosecha madura =
+IF ( EOMONTH ( MAX ( Calendario[Date] ), 0 ) + 60 <= DATE ( 2026, 6, 30 ), "Madura", "Sin madurar" )
 
 Desembolsado mes anterior =
 CALCULATE ( [Monto desembolsado], DATEADD ( Calendario[Date], -1, MONTH ) )
