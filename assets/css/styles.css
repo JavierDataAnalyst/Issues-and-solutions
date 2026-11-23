@@ -192,6 +192,7 @@ table.heat { border-collapse: collapse; width: 100%; min-width: 560px; font-size
 .code-item code { color: #9fc0ff; font-weight: 600; font-size: .86rem; display: block; overflow-wrap: anywhere; }
 .code-item p { margin: .35rem 0 .65rem; color: var(--muted); font-size: .88rem; }
 .code-item a { font-weight: 600; font-size: .86rem; }
+.project-link { display: inline-block; margin-top: 10px; font-weight: 600; font-size: .9rem; }
 .dax { max-height: 520px; }
 
 .footer { margin-top: 64px; padding: 26px 0 38px; border-top: 1px solid var(--line); color: var(--dim); font-size: .82rem; }

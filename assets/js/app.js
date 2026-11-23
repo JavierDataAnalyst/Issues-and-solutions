@@ -226,6 +226,7 @@
         <h4>${esc(t("results"))}</h4>
         <ul class="results">${p.results[lang].map((r) => `<li>${esc(r)}</li>`).join("")}</ul>
         <details><summary>${esc(t("actions"))}</summary><ul>${p.actions[lang].map((a) => `<li>${esc(a)}</li>`).join("")}</ul></details>
+        ${p.link ? `<a class="project-link" href="${esc(p.link.url)}" target="_blank" rel="noopener">${esc(p.link.label[lang])} →</a>` : ""}
         <div class="chips">${p.stack.map((s) => `<span class="chip">${esc(s)}</span>`).join("")}</div>`;
       return card;
     }));

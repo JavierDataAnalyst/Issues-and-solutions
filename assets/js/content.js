@@ -393,6 +393,35 @@ const PROJECTS = [
     },
     stack: ["Power BI", "DAX", "Power Query", "NetSuite"],
   },
+  {
+    id: "agentes-ia",
+    title: { es: "Guía educativa: agentes de IA paso a paso", en: "Educational guide: AI agents step by step" },
+    tag: { es: "IA · Divulgación", en: "AI · Teaching" },
+    problem: {
+      es: "Quien empieza con agentes de IA encuentra conceptos sueltos y en inglés: no queda claro qué es un agente, cuándo conviene usarlo y cuándo es gasto innecesario.",
+      en: "People starting with AI agents find scattered concepts, mostly in English: it is unclear what an agent is, when it pays off and when it is unnecessary spend.",
+    },
+    actions: {
+      es: [
+        "Convertí mis notas de estudio en una ruta de 10 pasos: entender, decidir, diseñar e integrar.",
+        "Expliqué cada concepto con un ejemplo y una analogía: el cocinero frente a la máquina de café, el detective del ciclo TAO, el mesero como API.",
+        "Agregué un asistente que recomienda chatbot, herramienta lista, low-code o construir, según el caso de negocio.",
+        "Simulador del ciclo pensamiento–acción–observación, quizzes, diagramas propios y modo claro/oscuro, sin dependencias.",
+      ],
+      en: [
+        "Turned my study notes into a 10-step path: understand, decide, design and integrate.",
+        "Explained each concept with an example and an analogy: the cook vs. the coffee machine, the detective of the TAO loop, the waiter as an API.",
+        "Added an assistant that recommends a chatbot, an off-the-shelf tool, low-code or building, depending on the business case.",
+        "Thought–action–observation loop simulator, quizzes, original diagrams and light/dark mode, with no dependencies.",
+      ],
+    },
+    results: {
+      es: ["Guía pública en español, en línea en GitHub Pages.", "16 secciones de notas convertidas en 10 pasos interactivos con 4 ejercicios."],
+      en: ["Public guide in Spanish, live on GitHub Pages.", "16 sections of notes turned into 10 interactive steps with 4 exercises."],
+    },
+    link: { url: "https://javierdataanalyst.github.io/Agentes-de-IA/", label: { es: "Ver la guía", en: "Open the guide" } },
+    stack: ["HTML", "CSS", "JavaScript", "GitHub Pages"],
+  },
 ];
 
 const DEMOS = {
