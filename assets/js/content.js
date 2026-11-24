@@ -160,6 +160,35 @@ const IN_PROGRESS = { es: "Datos en AWS (S3, Glue, Athena, Lambda) · Python ava
 
 const PROJECTS = [
   {
+    id: "colombia-energy",
+    title: { es: "Qué mueve el precio de la energía en Colombia", en: "What drives Colombia's electricity price" },
+    tag: { es: "Energía · Analytics engineering", en: "Energy · Analytics engineering" },
+    problem: {
+      es: "Una empresa que compra energía a precio de bolsa necesita saber cuándo subirá el precio para decidir si fija un contrato. ¿La señal es el nivel de los embalses o algo más?",
+      en: "A company buying electricity at the spot price needs to know when prices will rise to decide whether to lock in a contract. Is the signal the reservoir level, or something else?",
+    },
+    actions: {
+      es: [
+        "Ingesta desde la API pública de XM: cada respuesta se guarda intacta, con fecha de carga, y un mes se rechaza completo si le falta un día o una hora.",
+        "Modelo estrella en dbt con DuckDB: hechos por fecha × hora × planta, dimensiones de fecha y planta, y una tabla de excepciones en lugar de descartar datos.",
+        "16 pruebas de datos, entre ellas la conciliación diaria de la generación por planta contra el total del sistema (±0,5 %).",
+        "Diccionario de métricas, runbook, registro de decisiones y actualización semanal con GitHub Actions.",
+      ],
+      en: [
+        "Ingestion from XM's public API: each response is stored untouched with its load time, and a month is rejected whole if a day or hour is missing.",
+        "Star schema in dbt on DuckDB: facts by date × hour × plant, date and plant dimensions, and an exceptions table instead of dropping data.",
+        "16 data tests, including a daily reconciliation of plant-level generation against the system total (±0.5%).",
+        "Metric dictionary, runbook, decision log and a weekly refresh with GitHub Actions.",
+      ],
+    },
+    results: {
+      es: ["El precio sigue a las lluvias (correlación −0,68), no al nivel de los embalses (−0,18).", "En meses secos la mediana del precio fue unas 3 veces la de los meses húmedos.", "11 millones de registros horarios, 2023–2026."],
+      en: ["The price follows rainfall (correlation −0.68), not reservoir level (−0.18).", "In dry months the median price was about 3 times that of wet months.", "11 million hourly records, 2023–2026."],
+    },
+    link: { url: "https://javierdataanalyst.github.io/Colombia-energy-analytics/", label: { es: "Ver más", en: "See more" } },
+    stack: ["Python", "dbt", "DuckDB", "SQL", "GitHub Actions"],
+  },
+  {
     id: "borrowing-base",
     title: { es: "Certificado de borrowing base para la línea de crédito", en: "Borrowing base certificate for the credit facility" },
     tag: { es: "Calidad de datos · Riesgo", en: "Data quality · Risk" },
