@@ -7,6 +7,7 @@ const CONFIG = {
   linkedinUrl: "https://www.linkedin.com/in/javier-daza-5201b1176/",
   email: "javier.m.daza.p@gmail.com",
   cvUrl: "cv/Javier_Daza_CV.pdf", // versión pública, sin teléfono
+  engineeringUrl: "https://github.com/JavierDataAnalyst/JavierDataAnalyts#readme", // perfil de ingeniería (Industria 4.0)
 };
 
 const UI = {
@@ -45,6 +46,7 @@ const UI = {
     powerbiIntro: "Dashboard de riesgo de crédito en Power BI sobre los mismos datos ficticios: modelo estrella, limpieza en Power Query y medidas DAX. El análisis por cosecha revela que WhatsApp trae más volumen, pero su cartera de abril se deteriora 1,6× más. Debajo, las medidas DAX del modelo.",
     cvSoon: "CV · pronto", cvDownload: "Descargar CV",
     footer: "Demos con datos ficticios generados con python/generar_datos.py. Proyectos descritos sin nombres de clientes, bancos, contrapartes ni montos.",
+    engProfile: "¿Te interesa el lado de ingeniería e industria? Mira mi perfil en GitHub →",
     months: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul"],
     total: "Total", notMature: "sin madurar", count: "Préstamos", balance: "Saldo", from: "Desde", to: "Hacia",
     paid: "Pagado",
@@ -84,6 +86,7 @@ const UI = {
     powerbiIntro: "Credit-risk dashboard in Power BI on the same fictional data: star schema, Power Query cleaning and DAX measures. The vintage analysis shows WhatsApp brings more volume, but its April book deteriorates 1.6× faster. Below, the model's DAX measures.",
     cvSoon: "Resume · soon", cvDownload: "Download resume",
     footer: "Demos use fictional data generated with python/generar_datos.py. Projects are described without client, bank or counterparty names or amounts.",
+    engProfile: "Interested in the engineering and industry side? See my GitHub profile →",
     months: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul"],
     total: "Total", notMature: "not mature", count: "Loans", balance: "Balance", from: "From", to: "To",
     paid: "Paid off",

@@ -185,6 +185,7 @@
     document.querySelectorAll("[data-i18n]").forEach((n) => { n.textContent = t(n.dataset.i18n); });
     $("#lang").textContent = lang === "es" ? "EN" : "ES";
     $("#github-link").href = CONFIG.githubUrl;
+    $("#eng-link").href = CONFIG.engineeringUrl;
     $("#linkedin-link").href = CONFIG.linkedinUrl;
     $("#email-link").href = `mailto:${CONFIG.email}`;
 
